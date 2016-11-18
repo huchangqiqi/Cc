@@ -1,5 +1,6 @@
 #include "log.h"
 #include<pthread.h>
+#include<stdio.h>
 void*
 print_log(void* arg)
 {
@@ -37,6 +38,7 @@ main()
   for(int i = 0;i < 10; i++)
     {
       pthread_create(&thread_id[i],NULL,print_log,(void*)threadname[i]);
+      //printf("starting thread %s\n",threadname[i]);
     }
   for(int i = 0 ;i < 10 ;i++)
     {

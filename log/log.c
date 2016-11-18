@@ -12,33 +12,32 @@
 
 #define MAX_SIZE 200
 
-pthread_mutex_t mutex ;
-pthread_cond_t cond;
-pthread_t thrd ;
+static pthread_mutex_t mutex ;
+static pthread_cond_t cond;
+static pthread_t thrd ;
 
-static int log_fd ;
+static int log_fd ; /*日志文件*/
 static int flag ;
-static int is_full ;
 
 /*
-char* buff = NULL;
-char* ptr = NULL;
-char* pend = NULL;
-*/
-
-static char* get_level(log_level_t level){
+ *根据level 返回日志level
+ */
+static char*
+get_level(log_level_t level){
   switch(level)
     {
-    case DEBUG:return "DEBUG";
-    case INFO:return "INFO";
-    case WARN:return "WARN";
-    case ERROR:return "ERROR";
-    case FATAL:return "FATAL";
-    default: return "";
+    case DEBUG: return "DEBUG";
+    case INFO:  return "INFO";
+    case WARN:  return "WARN";
+    case ERROR: return "ERROR";
+    case FATAL: return "FATAL";
+    default:    return "";
     }
 }
 
-
+/*
+ *持久化写入硬盘
+ */
 static void*
 persistence(void* arg)
 {
@@ -59,16 +58,19 @@ persistence(void* arg)
   return NULL;
 }
 
+/*
+ *
+ */
 int
 log_cache(const char *log)
 {
-  int len = strlen(log);
   void* begin;
 
   cache:
-  if( (begin = mem_alloc(len)) != NULL)
+  if( (begin = mem_alloc(strlen(log))) != NULL)
     {
-      memcpy(begin,log,len);
+      memcpy(begin,log,strlen(log));
+      //printf("begin cache = %s\n",begin);
     }
   else
     {
@@ -78,7 +80,9 @@ log_cache(const char *log)
   return 0;
 }
 
-
+/*
+ *格式化日志时间 日志内容 写入 cache
+ */
 int
 log_write(const char* file, const char* func,
               const int line,log_level_t level,char* msg,...)
@@ -105,7 +109,9 @@ log_write(const char* file, const char* func,
 
   return 0;
 }
-
+/*
+ *初始化log 初始化锁
+ */
 int
 log_init()
 {
@@ -124,6 +130,9 @@ log_init()
   return 0;
 }
 
+/*
+ *销毁log 销毁锁
+ */
 int
 log_destory()
 {

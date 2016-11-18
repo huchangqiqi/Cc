@@ -3,6 +3,7 @@
 #include<stdlib.h>
 #include<memory.h>
 #include<pthread.h>
+#include<stdio.h>
 
 
 #define BLOCK_SIZE (1<<12) /* 块大小 */
@@ -15,7 +16,7 @@ struct block_list{
 
 static struct{
   struct block_list    free_block;
-  struct block_list    full_blcok;
+  struct block_list    full_block;
   struct block_list *  current_block;
   unsigned int         block_size;
   unsigned int         block_count;
@@ -27,6 +28,9 @@ static pthread_mutex_t alloc_mutex;
 
 /*
  *获得一个空的块
+ *
+ *
+ *@called by :memory_init update_current_block
  */
 static struct block_list *
 get_free_block()
@@ -37,34 +41,17 @@ get_free_block()
       memory.block_count += BLOCK_COUNT;
       for(int i = 0; i < BLOCK_COUNT; i++)
         {
-          void* block = malloc(memory.block_size);
           struct block_list* block_ptr =
             (struct block_list *)malloc(sizeof(struct block_list));
-          block_ptr->blcok = block;
+          block_ptr->blcok  = malloc(memory.block_size);
           list_add(&(block_ptr->list),&(memory.free_block.list));
         }
     }
 
-  struct block_list * free =
-    list_entry(&(memory.free_block.list),struct block_list,list);
+  struct block_list * free = list_first_entry(&(memory.free_block.list), struct block_list, list);
   list_del(&(free->list));
-  return free;
-}
 
-/*
- *获得一个写满的块
- */
-char *
-get_full_block()
-{
-  char* ret = NULL;
-  struct block_list* full;
-  if( !list_empty(&(memory.full_blcok.list)))
-    {
-      full = list_entry(&(memory.full_blcok.list),struct block_list,list);
-      ret = (char*) full->blcok;
-    }
-    return ret;
+  return free;
 }
 
 
@@ -78,18 +65,19 @@ memory_init()
   memory.block_size = BLOCK_SIZE;
   memory.block_count = BLOCK_COUNT;
   memory.used_size = 0;
-  memory.full_blcok.blcok = NULL;
+  memory.full_block.blcok = NULL;
   memory.free_block.blcok = NULL;
-  INIT_LIST_HEAD(&(memory.full_blcok.list));
+  INIT_LIST_HEAD(&(memory.full_block.list));
   INIT_LIST_HEAD(&(memory.free_block.list));
+
   for(int i = 0;i < BLOCK_COUNT; i++)
     {
-      void* block = malloc(memory.block_size);
       struct block_list* block_ptr =
         (struct block_list *)malloc(sizeof(struct block_list));
-      block_ptr->blcok = block;
+      block_ptr->blcok  = malloc(memory.block_size);
       list_add(&(block_ptr->list),&(memory.free_block.list));
     }
+
   memory.current_block = get_free_block();
   memory.begin = memory.current_block->blcok;
 
@@ -104,14 +92,12 @@ memory_init()
 void
 memory_destory()
 {
-  struct block_list* node ;
-  struct block_list* node_n;
-  list_for_each_entry_safe(node, node_n, &(memory.free_block.list),list)
+  struct block_list* pos;
+  struct block_list* n;
+  list_for_each_entry_safe(pos, n, &(memory.free_block.list), list)
     {
-      free(node->blcok);
-      node->blcok = NULL;
-      list_del(&(node->list));
-      free(node);
+      list_del(&(pos->list));
+      free(pos);
     }
 
   free(memory.current_block->blcok);
@@ -122,24 +108,48 @@ memory_destory()
 }
 
 /*
- *释放一块已写入磁盘的内存
+  *获得一个full块
+  */
+char *
+get_full_block()
+{
+  // printf("start get_full_block\n");
+  char* ret = NULL;
+  struct block_list* full;
+  if( !list_empty(&(memory.full_block.list)))
+    {
+      full = list_first_entry(&(memory.full_block.list),struct block_list,list);
+      ret = (char*) full->blcok;
+    }
+  return ret;
+}
+
+
+
+/*
+ *释放一个full块 移动到free链
  */
 
 int release_full_block()
 {
-  struct block_list * rel = list_entry(&(memory.full_blcok.list),struct block_list,list);
+  //printf("start release_full_block\n");
+  struct block_list * rel = list_first_entry(&(memory.full_block.list), struct block_list, list);
   list_del(&(rel->list));
   list_add(&(memory.free_block.list),&(rel->list));
   return 0;
 
 }
 
-
+/*
+ * 讲当前块添加到full列表
+ * 从free中取出一个作为current
+ *
+ */
 void update_current_block()
 {
   memory.used_size = 0;
   *((char*)memory.begin) = '\0';
-  list_add(&(memory.full_blcok.list),&(memory.current_block->list));
+  list_add(&(memory.full_block.list),&(memory.current_block->list));
   memory.current_block = get_free_block();
 }
 
@@ -170,9 +180,10 @@ mem_alloc(unsigned int size)
     {
       memory.begin = (void*)((char*)memory.begin + size);
     }
-  else{
+  else
+    {
     ret = NULL;
-  }
+    }
   pthread_mutex_unlock(&alloc_mutex);
   return ret;
 }
