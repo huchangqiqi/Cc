@@ -1,0 +1,14 @@
+* Magit   
+ space g s
+ s ## stage file 在unstage 的文件上按s 
+ c ## commit file
+ C-c C-c ## 提交
+ p ## push界面 再按p 直接push到远程
+ 
+* Org
+** link 
+   [[http://www.fuzihao.org/blog/2015/02/19/org-mode%E6%95%99%E7%A8%8B]]
+** TODO 总任务
+*** TODO d1
+*** TODO d2
+*** TODO   start latex ！！！

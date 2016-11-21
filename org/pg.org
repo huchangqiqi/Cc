@@ -1,0 +1,77 @@
+* 建表/建库
+    createdb test;
+    \c test
+    create table person(id int ,name varchar(10),sex char(1),birth date);
+    \d
+    \d person
+* 增删改查 
+    insert into person (id,name,sex,birth) values (1,'zhangsan','1',1990-01-08');
+
+    select * from person;
+    update person set name='lisi' where id=1;
+    delete from person where id = 1;
+* 更改字段
+    alter table person add column address varchar(50);
+    alter table person alter column address type varchar(20);
+    alter table person rename column id to no;
+    alter table person rename to person_demo;
+    alter table perosn drop column address;
+* 约束
+    alter table person add primary key(id);
+    alter table person add constraint unique_name unique(name);
+    alter table person drop constraint unique_name;
+    alter table person drop constraint person_pkey;
+* 删除
+    drop table person;
+    \q
+    dropdb test;
+
+    \c postgres
+    drop database test;
+* 基本数据类型
+* 存储过程和触发器
+** 存储过程
+   #+BEGIN_SRC 
+   create or replace function func_name(arg1 type1,arg2 type2) returns 返回值类型 as
+   $body$
+   declare
+   变量名类型;
+   flag Boolean;
+   变量赋值方式 (变量名类型 := 值;)
+   str text := 'str';
+   
+   begin
+   函数体
+   return 变量名;
+
+   end;
+   $body$
+   language plpgsql;
+
+   #+END_SRC
+** 触发器
+* pg_dump
+** pg_dump -t [tablename] [dbname] > dumpfile
+*** -s -t 导出表结构
+*** -a 导出内容
+*** -F  
+    t  tar格式
+    c  pg_dump 客户话格式
+* pg_restore
+** pg_restore dumpfile 
+** psql 
+   \i sqlfile
+* cursor
+** 声明游标
+   curs1 refcursor;
+   curs2 CURSOR [(arguments)] FOR query;
+** 打开游标
+   OPEN unbound_cursor FOR query;
+   # 
+   OPEN unbound_cursor FOR EXECUTE query-string;
+   OPEN bound_cursor [(argument_values)];
+** 使用游标
+   1.FETCH
+   FETCH cursor INTO target;
+   2.CLOSE
+   CLOSE cursor;
