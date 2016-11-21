@@ -1,5 +1,6 @@
+<<<<<<< HEAD
 #存储过程
-create function and_em(integer,integer) returns integer as $$
+create function and_em() returns integer as $$
 select $1 + $2;
 $$ language sql;
 
@@ -17,3 +18,8 @@ after update on ts
 for each row execute procedure select_ts();
 
 
+=======
+create function and_em() returns integer as $$
+select $1 + $2;
+$$ language sql;
+>>>>>>> origin/master
