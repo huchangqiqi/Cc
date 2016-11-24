@@ -1,0 +1,29 @@
+#include<stdio.h>
+
+EXEC SQL BEGIN DECLARE SECTION;
+char dbname[1024];
+EXEC SQL END DECLARE SECTION;
+
+int
+main()
+{
+  EXEC SQL CONNECT TO tcp:postgresql://localhost:5432/test1 AS con1 USER postgres/postgres;
+  EXEC SQL CONNECT TO test2 AS con2 USER postgres/postgres;
+  EXEC SQL CONNECT TO test3 AS con3 USER postgres/postgres;
+
+  EXEC SQL SELECT current_database() INTO :dbname;
+  printf("current = %s (should be testdb3)\n",dbname);
+
+  EXEC SQL AT con2 SELECT current_database() INTO :dbname;
+  printf("current = %s (should be testdb2)\n", dbname);
+
+  EXEC SQL SET CONNECTION con1;
+
+  EXEC SQL SELECT current_database() INTO :dbname;
+  EXEC SQL INSERT INTO t1 values(123);
+  printf("current = %s (should be testdb1)\n",dbname);
+
+  EXEC SQL DISCONNECT ALL;
+  return 0;
+
+}

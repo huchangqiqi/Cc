@@ -1,3 +1,6 @@
+* gtags 
+  yaourt : global ctags python-pygments ycm-generator-git
+  .spacemacs gtags
 * Magit   
  space g s
  s ## stage file 在unstage 的文件上按s 
@@ -12,3 +15,10 @@
 *** TODO d1
 *** TODO d2
 *** TODO   start latex ！！！
+*** 
+
+* agenda 
+
+** space a o o
+
+** 

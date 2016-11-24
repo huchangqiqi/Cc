@@ -1,3 +1,6 @@
+* 开启/停止服务 
+  pg_ctl -D /var/postgresql/data -l /var/postgresql/logfile start
+  pg_ctl -D /var/postgresql/data -l /var/postgresql/logfile stop
 * 建表/建库
     createdb test;
     \c test
@@ -75,3 +78,8 @@
    FETCH cursor INTO target;
    2.CLOSE
    CLOSE cursor;
+* ecpg 
+  #+begin_src
+  ecpg prog.pgc
+  gcc prog.c -o prog -I /usr/include/postgresql/ -lpq -lecpg
+  #+end_src
