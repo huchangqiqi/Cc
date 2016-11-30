@@ -1,0 +1,8 @@
+* 
+* 
+* subroutines
+** Note  
+    that subroutines have no type and consequently should not (cannot) 
+    be declared in the calling program unit.
+    They are also invoked differently than functions, 
+    using the word call before their names and parameters.

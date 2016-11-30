@@ -1,0 +1,15 @@
+* Tasks
+** TODO 
+   [2016-11-25 五]
+   [[file:~/CODE/org/spacemacs.org::*customize][customize]]
+** DONE 
+   CLOSED: [2016-11-30 三 09:27]
+   [2016-11-29 二]
+   [[file:~/CODE/org/svn.org][file:~/CODE/org/svn.org]]
+** TODO 
+    SFML Game Development
+    [[https://book.douban.com/subject/26316124/]]
+** TODO 
+   [2016-11-30 三]
+   [[file:~/CODE/Fortron/tutorial/fileIO.f::if(%20n%20.GT.%20nmax)%20then]]
+   asterisks 

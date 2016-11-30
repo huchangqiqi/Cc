@@ -1,0 +1,12 @@
+* checkout
+** svn co http://路径 [本地路径] [--username 用户名]
+** svn co svn://路径 [本地路径]
+* export
+* add
+** svn add 文件名
+* commit
+** svn ci -m "提交备注信息文本" 文件名
+* update
+** svn update 
+** svn update -r 
+** svn update filename 

@@ -1,17 +1,38 @@
 * PROJECTS
+** project1
+*** TODO t1 
+*** TODO t2 
 * TASKS
-** DONE fortran unit.3 
-   CLOSED: [2016-11-24 四 14:07]
+** DONE book
+   CLOSED: [2016-11-30 三 09:25]
+*** DONE fortran unit.3 
+    CLOSED: [2016-11-24 四 14:07]
+    :LOGBOOK:
+    CLOCK: [2016-11-24 四 09:53]--[2016-11-24 四 10:23] =>  0:30
+    :END:
+*** DONE fortran uni3.3
+    CLOSED: [2016-11-24 四 14:07]
+     :LOGBOOK:
+     CLOCK: [2016-11-24 四 10:24]--[2016-11-24 四 11:12] =>  0:48
+     :END:
+*** DONE fortran func ary 
+    CLOSED: [2016-11-24 四 15:33]
+    :LOGBOOK:
+    CLOCK: [2016-11-24 四 14:08]--[2016-11-24 四 14:33] =>  0:25
+    :END:
+*** DONE fortran book 
+    CLOSED: [2016-11-26 六 14:07] SCHEDULED: <2016-11-26 六>
+    :LOGBOOK:
+    CLOCK: [2016-11-25 五 09:17]--[2016-11-25 五 09:19] =>  0:02
+    :END:
+** TODO fortran tutorial  
+** TODO 数据库培训
+
+
+
    :LOGBOOK:
-   CLOCK: [2016-11-24 四 09:53]--[2016-11-24 四 10:23] =>  0:30
+   CLOCK: [2016-11-26 六 14:08]
    :END:
-** DONE fortran uni3.3
-   CLOSED: [2016-11-24 四 14:07]
-   :LOGBOOK:
-   CLOCK: [2016-11-24 四 10:24]--[2016-11-24 四 11:12] =>  0:48
-   :END:
-** DONE fortran func ary 
-   CLOSED: [2016-11-24 四 15:33]
-   :LOGBOOK:
-   CLOCK: [2016-11-24 四 14:08]--[2016-11-24 四 14:33] =>  0:25
-   :END:
+*** TODO mooc
+* webbook
+[[https://www.emacswiki.org/emacs?interface=zh-cn]]

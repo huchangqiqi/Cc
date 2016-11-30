@@ -1,0 +1,11 @@
+* 内存寻址
+  首先将给定一个逻辑地址，
+  CPU要利用其段式内存管理单元，先将每个逻辑地址转换成一个线程地址，
+  再利用其页式内存管理单元，转换为最终物理地址。
+* CPU段式内存管理 逻辑地址转为线性地址
+  index T1 : offset 
+  [[file:~/Pictures/1.jpg]]
+
+* CPU页式内存管理 线性地址转为物理地址
+  directory | table | offset
+  [[file:~/Pictures/2.jpg]]

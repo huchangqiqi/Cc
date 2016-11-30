@@ -1,0 +1,6 @@
+* share file in network
+** pc 
+   python -m http.server
+   ipconfig 
+** mobile
+   http://ip_addr:8000
