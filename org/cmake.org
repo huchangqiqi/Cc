@@ -1,0 +1,17 @@
+* CMake
+**  
+   t2
+   +CMakeLists.txt
+     PROJECT(HELLO)
+     ADD_SUBIDRECTORY(src bin)
+   +src
+    CMakeLists.txt
+     ADD_EXECUTABLE(main main.c)
+     INCLUDE_DIRECTORIES()
+  
+
+-------------------------------------
+进入build 目录 
+cmake ..
+make
+
