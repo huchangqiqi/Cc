@@ -1,0 +1,213 @@
+* Fortran 77 Basic
+
+   #+BEGIN_SRC fortran
+
+      program circle
+      real r ,area
+      write (*,*) 'Give radius r:'
+      read (*,*) r
+      area = 3.14159 * r * r
+      wirte (*,*) 'Area = ', area
+      stop
+      end
+
+   #+END_SRC
+
+** Program organization
+
+   program name
+   
+   declarations
+
+   statements
+
+   stop
+   end
+
+** Column position rules
+   col.1 : Blank ,or a "c " or "*" for comments
+   col.1-5 : statement label (optional)
+   col.6 Continuation of previous line (optional)
+   col.7-72: statements
+   col.73-80: Sequence number(optional ,rarely used today)
+
+** Comments
+   c
+   ! #not standard
+
+** Continuation
+   area = 3.1415926
+  +       * r * r
+
+** Blank spaces
+   ignored
+* Variables,Types,Declarations
+** Variable names
+   1-6 characters  a-z 0-9 ,the first must be a letter, 
+   not distinguish between upper and lower case
+** Types and declarations
+   integer
+   real
+   double precision
+   complex
+   logical
+   character
+** Intergers and floating point variables
+   integer 32bits(4 bytes)
+   floating  real 4bytes
+             double precision 8bytes
+** The parameter statement
+   parameter(name=constant,...,name=constant)
+* Expressions and Assignment
+** Constans
+   1,0,-100,32767,+15
+   1.0,-0.25,2.0E6,3.333E-1
+   2.0D-1,1D99
+   .TRUE. , .FALSE.
+   'ABC','Anything goes!', 'It''s a nice day'
+** Expressions
+   operand operator operand
+   x + y
+
+   **
+   *,/
+   +,-
+
+   note 3/2 equals 1, 3./2 equals 1.5
+** Assignment
+   variable_name = expression
+   area = pi * r**2
+
+** Type conversion
+   type conversion implicitly
+   real x 
+   x = x + 1
+   functions: int real dble ichar char
+*** Example:
+    w = dble(x) * dble(y)
+    w = dble(x*y)
+* Logical Expressions
+
+   .LT.
+   .LE.
+   .GT.
+   .GE.
+   .EQ.
+   .NE.
+
+** logical variables and assignment
+   logical a,b
+   a = .TRUE.
+   b = a .AND. 3 .LT. 5/2
+   rule: arithmetic > relation > logical
+   logical_rule : .NOT. > .AND. > .OR.
+   
+* The if statements
+  if(logical expression) then
+  statements
+  elseif (logical expression) then
+  statements
+  else
+  statements
+  endif
+** nested if statements
+
+   if( x .GT. 0) then
+      if( x .GE. y) then
+        write(*,*) 'x is positive and x > = y'
+      else 
+        write(*,*) 'x is positive and x < y'
+      endif
+   endif
+
+* Loops
+** do-loops
+
+   integer i,n,sum
+   sum = 0
+   do 10 i = 1,n
+      sum = sum + 1
+      write(*,*) 'i=', i
+      write(*,*) 'sum=' ,sum
+10 continue
+
+   #see loop.f
+   #
+
+** while-loops
+   
+   integer n
+   n = 1
+10 if (n .le . 100) then
+      write(*,*) n
+      n = 2*n
+      goto 10
+   endif
+
+** until-loops
+  lable continue
+        statements
+  if (logical expr) goto label
+
+* Arrays
+** One-dimensional arrays
+   real a(20)
+   real b(0:19) ,c(-19:20)
+** Two-dimensional arrays
+
+   real A(3,5)
+   integer i,j
+   do 20 j = 1,3
+      do 10 i = 1,3
+        a(i,j) = real(i)/real(j)
+10    continue
+20 continue
+  
+A(1:3,4:5) are undefined  
+
+** Storage format for 2-dimensional arrays
+   2-dimensional arrays are stored 
+   by column
+   
+   addr[A(i,j)] = addr[A(1,1)] + (j-1)*lda + (i-1)
+   lda is the leading ( row ) dim of A.
+** Multi-dimensional arrays
+  
+** The dimensional statement
+   real A,X
+   dimension X(50)
+   dimension A(10,20)
+
+   are equal to 
+   real A(10,20),X(50)
+
+* Subprograms
+** Functions
+** Subroutines
+** Call-by-reference
+* Arrays in Subprograms
+** Variable length arrays
+** Passing subsections of arrays
+** Different dimensions
+* Common Blocks
+** Example
+** Syntax
+** Arrays in common blocks
+* Data and Block Data Statements
+** The data statement
+** The block data statement
+* File I/O
+** Opening and closing a file
+** Read and write revisted
+** Example
+* Simple I/O
+** Read and write
+** Examples
+** other versions
+* Format Statements
+** Syntax
+** Common format codes
+** Some examples
+** Format strings in read/write statements
+** Implicit loops and repeat counts
+

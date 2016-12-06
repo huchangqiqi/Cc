@@ -55,6 +55,7 @@
    #+RESULTS: py
    : None
 
+
 * agenda 
 ** 
      todo
@@ -66,3 +67,6 @@
 * layout
   l s #save the layout 
   l L #load the layout
+  
+* python
+  yaourt -S python-pip
