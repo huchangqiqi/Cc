@@ -1,0 +1,29 @@
+{
+  "brand":"kvm",
+  "alias": "kvm03",
+  "hostname": "kvm03",
+  "resolvers": [
+    "183.221.253.110",
+    "8.8.4.4"
+  ],
+  "ram": "2048",
+  "vcpus": "2",
+  "nics": [
+    {
+      "nic_tag": "admin",
+      "ip": "10.9.8.33",
+      "netmask": "255.255.255.0",
+      "gateway": "10.9.8.254",
+      "model": "virtio",
+      "primary": true
+    }
+  ],
+  "disks": [
+    {
+      "image_uuid": "6c65c168-4aa4-11e6-ad57-cbb879c9b8c6",
+      "boot": true,
+      "model": "virtio"
+    }
+  ]
+}
+

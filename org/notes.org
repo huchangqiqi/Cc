@@ -13,3 +13,9 @@
    [2016-11-30 三]
    [[file:~/CODE/Fortron/tutorial/fileIO.f::if(%20n%20.GT.%20nmax)%20then]]
    asterisks 
+** TODO 
+   [2016-12-08 四]
+   [[file:~/CODE/Python/pj/python_captcha/crack.py::def%20magnitude(self,%20concordance):]]
+** TODO 
+   SCHEDULED: <2016-12-10 六>
+   https://github.com/trending/python

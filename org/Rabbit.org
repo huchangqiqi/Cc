@@ -1,0 +1,6 @@
+* systemctl start rabbitmq.service
+* notes
+**    
+    producer只能发送到exchange
+    默认的exchange 允许我们发送到指定的queue 
+    routing_key 就是指定的queue的名字

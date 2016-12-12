@@ -1,0 +1,91 @@
+* 
+* 进程
+** os.fork()
+** multiprocessing
+
+   #+NAME: mp
+   #+BEGIN_SRC python :results output
+     from multiprocessing import Process
+     import os
+
+
+     def run_proc(name):
+         print('run child process %s(%s)' % (name, os.getpid()))
+
+
+     if __name__ == '__main__':
+         print('Parent process %s.' % os.getpid())
+         p = Process(target=run_proc, args=('test',))
+         print('Child process will start.')
+         p.start()
+         p.join()
+         print('Child process end.')
+   #+END_SRC
+
+   #+RESULTS: mp
+   : Parent process 22424.
+   : Child process will start.
+   : run child process test(22426)
+   : Child process end.
+
+
+
+
+
+
+
+   multiprocessing 模块提供一个Process类代表一个进程对象
+   创建一个Process实例，用start()方法启动，
+   join()方法等待子进程结束后继续运行
+* thinking
+** dict, list 初始化
+   #+BEGIN_SRC python :results output
+     # dict
+     d1 = {}
+     d1['one'] =1
+     d1['two'] = 2
+     d1['three'] =3
+     a = dict(one=1,two=2,three=3)
+     b = {'one':1,'two':2,'three':3}
+     c = dict(zip(['one','two','three'],[1,2,3]))
+     d = dict([('two',2),('one',1),('three',3)])
+     e = dict({'one':1,'two':2,'three':3})
+
+     dict = {'jack':4098,'sjoe':3172}
+     dict(**kwarg)
+     dict(mapping,**kwarg)
+     dict(iterable,**kwarg)
+
+     # list
+     []
+     [a],[a,b,c]
+     [x for x in iterable]
+     list() or list(iterable)
+   #+END_SRC 
+** tuple, dict, list之间互相转换
+     # dict -> list
+     dict = {'one':1,'two':2,'three':3}
+     list(dict)
+     list(dict.values())
+     
+     # dict -> tuple
+     tuple(dict)
+     tuple(dict.values())
+     
+     # tuple -> list  tuple can't to dict
+     list(tup)
+     
+     # list -> tuple  list can't to dict
+     tuple(list)
+
+     # str
+     tuple(eval('1,2,3'))
+     list(eval('1,2,3'))
+     dict(eval("{'one':1,'two':2,'three':3}"))
+** mutable, immutable
+   1. mutable : dict list
+   2. immutable : str tuple int
+      [[https://mcfloundinho.github.io/python-mutable.html]]
+   3. function
+      [[https://mcfloundinho.github.io/python-function.html]]
+   

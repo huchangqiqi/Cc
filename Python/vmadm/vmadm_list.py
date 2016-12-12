@@ -10,14 +10,12 @@ stdin, stdout, stderr = ssh.exec_command("vmadm list")
 valist = stdout.readlines()[1:]
 for x in valist:
     id = x.split()[0]
-    print(id)
     comm = "vmadm get " + id
     stdin, stdout, stderr = ssh.exec_command(comm)
     properties = stdout.read()
     # print(type(properties))
     data = json.loads(properties.decode())
-    print(data)
+    print("id = {0} , data = {1}".format(id, data))
     break
 
 ssh.close()
-

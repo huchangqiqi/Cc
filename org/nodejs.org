@@ -1,0 +1,10 @@
+* 
+* 代码组织和部署
+** 模块路径解释规则
+   1. 内置模块
+   2. node_modules 目录
+   3. NODE_PATH 环境变量
+** package
+   1. index.js 模块的文件名是index.js
+   2. package.json 包目录下包含一个 package.json
+ 
