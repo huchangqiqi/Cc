@@ -60,9 +60,9 @@ flags = [
 '-x',
 'c',
 '-isystem',
-'../BoostParts',
+'/usr/include',
 '-isystem',
-'/usr/include'
+'../BoostParts',
 '-isystem',
 # This path will only work on OS X, but extra paths that don't exist are not
 # harmful
