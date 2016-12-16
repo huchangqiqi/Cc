@@ -287,7 +287,9 @@ values."
    ;; delete only whitespace for changed lines or `nil' to disable cleanup.
    ;; (default nil)
    dotspacemacs-whitespace-cleanup nil
-   ))
+   gtags-enable-by-default t
+
+  ))
 
 (defun dotspacemacs/user-init ()
   "Initialization function for user code.
@@ -320,9 +322,6 @@ you should place your code here."
 (add-hook 'python-mode-hook 'ycmd-mode)
 (require 'company-ycmd)
 (company-ycmd-setup)
-(setq-default dotspacemacs-configuration-layers
-              '((gtags :variables gtags-enable-by-default t)))
-
 (global-company-mode t)
 (global-flycheck-mode t)
 

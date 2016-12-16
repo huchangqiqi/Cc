@@ -9,13 +9,9 @@
 
 #include "utils.h"
 
-static pthread_mutex_t mutex;
-static pthread_cond_t cond;
-
 void* send_msg_async(void *ptf)
 {
-  printf("starting send msg\n");
-  //char const *const *argv = ptf;
+  printf("client1 starting send msg\n");
   char const *hostname;
   int port, status;
   char const *exchange;
@@ -53,11 +49,18 @@ void* send_msg_async(void *ptf)
 
   }
 
-  {
+  for(int i = 0;i < 10; i++){
+
+    sleep(1);
     amqp_basic_properties_t props;
     props._flags = AMQP_BASIC_CONTENT_TYPE_FLAG | AMQP_BASIC_DELIVERY_MODE_FLAG;
     props.content_type = amqp_cstring_bytes("text/plain");
-    props.delivery_mode = 2;
+    props.delivery_mode =2;
+
+    char buff[20];
+    snprintf(buff,sizeof(buff),"%d",i);
+    props.correlation_id = amqp_cstring_bytes(buff);
+
     die_on_error(amqp_basic_publish(conn,
                                     1,
                                     amqp_cstring_bytes(exchange),
@@ -68,11 +71,10 @@ void* send_msg_async(void *ptf)
                                     amqp_cstring_bytes(messagebody)),
                  "Publishing");
 
-  }
-  printf("messagebody = %s\n",ptf);
-  printf("published\n");
+    printf("messagebody = %s\n",ptf);
+    printf("published\n");
 
-  pthread_cond_signal(&cond);
+  }
 
   die_on_amqp_error(amqp_channel_close(conn,1,AMQP_REPLY_SUCCESS),"Closing channel");
   die_on_amqp_error(amqp_connection_close(conn,AMQP_REPLY_SUCCESS),"Closing connection");
@@ -82,11 +84,7 @@ void* send_msg_async(void *ptf)
 
 void* receive(void *ptr)
 {
-  pthread_cond_wait(&cond,&mutex);
-  //sleep(10);
-  //pthread_cond_timedwait();
-  printf("starting receive\n");
-  //char const *const *argv = ptr;
+  printf("client1 starting receive\n");
   char const *hostname;
   int port, status;
   char const *exchange;
@@ -197,8 +195,6 @@ int main()
   char * msg1 = "hello one";
   pthread_t thread1,thread2 ;
 
-  pthread_mutex_init(&mutex,NULL);
-  pthread_cond_init(&cond,NULL);
 
   iret1 = pthread_create(&thread1,NULL,send_msg_async,(void*)msg1);
   if(iret1){
@@ -216,7 +212,5 @@ int main()
   pthread_join(thread1,NULL);
   pthread_join(thread2,NULL);
 
-  pthread_mutex_destroy(&mutex);
-  pthread_cond_destroy(&cond);
   exit(EXIT_SUCCESS);
 }

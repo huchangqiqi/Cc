@@ -1,0 +1,8 @@
+* timedatectl 
+  sudo pacman -S ntp
+  ntpdate 202.120.2.101
+  systemctl stop ntpd.service
+  sudo netpdate 202.120.2.101
+  timedatectl set-local-rtc false
+  timedatectl set-ntp true
+  sudo hwclock --systohc --utc

@@ -9,10 +9,7 @@
 
 #include "utils.h"
 
-char* sayHello(char *name){
-  char d[100] = "hello";
-  return strcat(d,name);
-}
+
 
 int main(int argc, char const *const *argv)
 {
@@ -21,6 +18,7 @@ int main(int argc, char const *const *argv)
   int port, status;
   char const *exchange;
   char const *bindingkey;
+  char const *routingkey;
   amqp_socket_t *socket = NULL;
   amqp_connection_state_t  conn;
 
@@ -37,7 +35,7 @@ int main(int argc, char const *const *argv)
   bindingkey = argv[4];
 
   /*
-   * channel
+   *  conn channel
    */
   conn = amqp_new_connection();
 
@@ -85,15 +83,23 @@ int main(int argc, char const *const *argv)
 
       amqp_maybe_release_buffers(conn);
       res = amqp_consume_message(conn, &envelope, NULL, 0);
+
       if(AMQP_RESPONSE_NORMAL != res.reply_type){
         break;
       }
 
       amqp_basic_properties_t replyprops;
+      replyprops._flags = AMQP_BASIC_CONTENT_TYPE_FLAG |
+        AMQP_BASIC_DELIVERY_MODE_FLAG |
+        AMQP_BASIC_CORRELATION_ID_FLAG;
+
       replyprops.content_type = amqp_cstring_bytes("text/plain");
       replyprops.delivery_mode = 2;
       replyprops.correlation_id = envelope.message.properties.correlation_id;
+      routingkey = (char *) envelope.message.properties.reply_to.bytes;
 
+      printf("listening routingkey = %s\n",routingkey);
+      printf("replyprops.correlation_id = %s\n",replyprops.correlation_id.bytes);
 
       printf("Delivery %u , exchange %.*s routingkey %.*s\n",
              (unsigned) envelope.delivery_tag,
@@ -108,32 +114,26 @@ int main(int argc, char const *const *argv)
       printf("----\n");
 
       amqp_dump(envelope.message.body.bytes, envelope.message.body.len);
-     /*
-     // amqp_dump(mes,strlen(mes));
-     //envelope.message.properties.reply_to
 
       {
 
-        //char * response ;
-        char * response = (char *)envelope.message.body.bytes;
-        //response = sayHello(mes);
-        //printf("%s\n", response);
-
+        char *response = "listening";
+        printf("%s\n", response);
+        //char * response = (char *)envelope.message.body.bytes;
         die_on_error(amqp_basic_publish(conn,
                                         1,
                                         amqp_cstring_bytes(exchange),
-                                        amqp_cstring_bytes(bindingkey),
+                                        amqp_cstring_bytes(routingkey),
                                         0,
                                         0,
                                         &replyprops,
                                         amqp_cstring_bytes(response)),
                      "response");
 
+
       }
-
-     */
-
       amqp_destroy_envelope(&envelope);
+      printf("published\n");
     }
   }
 

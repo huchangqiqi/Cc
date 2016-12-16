@@ -2,20 +2,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <unistd.h>
 #include <amqp.h>
 #include <amqp_tcp_socket.h>
 #include <amqp_framing.h>
 
 #include "utils.h"
 
-static pthread_mutex_t mutex;
-static pthread_cond_t cond;
-
 void* send_msg_async(void *ptf)
 {
-  pthread_cond_wait(&cond, &mutex);
-  //char const *const *argv = ptf;
-  printf("starting send msg\n");
+  printf("client 2 starting send msg\n");
   char const *hostname;
   int port, status;
   char const *exchange;
@@ -30,7 +26,8 @@ void* send_msg_async(void *ptf)
   exchange = "reply";
   exchangetype = "direct";
   routingkey = "reply";
-  messagebody = ptf;
+  messagebody = "hello two";
+
 
   conn = amqp_new_connection();
   socket = amqp_tcp_socket_new(conn);
@@ -42,11 +39,13 @@ void* send_msg_async(void *ptf)
     die("opening TCP socket");
   }
   {
+    //printf("connectioning \n");
   die_on_amqp_error(amqp_login(conn,"/",0,131072,0,AMQP_SASL_METHOD_PLAIN,"guest","guest"),
                     "Logging in");
 
   amqp_channel_open(conn, 2);
   die_on_amqp_error(amqp_get_rpc_reply(conn),"Opening channel");
+
   }
 
   {
@@ -56,33 +55,36 @@ void* send_msg_async(void *ptf)
 
   }
 
-  {
-    amqp_basic_properties_t props;
-    props._flags = AMQP_BASIC_CONTENT_TYPE_FLAG | AMQP_BASIC_DELIVERY_MODE_FLAG;
-    props.content_type = amqp_cstring_bytes("text/plain");
-    props.delivery_mode = 2;
-    die_on_error(amqp_basic_publish(conn,
-                                    2,
-                                    amqp_cstring_bytes(exchange),
-                                    amqp_cstring_bytes(routingkey),
-                                    0,
-                                    0,
-                                    &props,
-                                    amqp_cstring_bytes(messagebody)),
-                 "Publishing");
+  //for(int i = 0; i< 10; i++){
+  //sleep(1);
+      amqp_basic_properties_t props;
+      props._flags = AMQP_BASIC_CONTENT_TYPE_FLAG | AMQP_BASIC_DELIVERY_MODE_FLAG;
+      props.content_type = amqp_cstring_bytes("text/plain");
+      props.delivery_mode = 2;
+      props.correlation_id = ptf;
+      die_on_error(amqp_basic_publish(conn,
+                                      2,
+                                      amqp_cstring_bytes(exchange),
+                                      amqp_cstring_bytes(routingkey),
+                                      0,
+                                      0,
+                                      &props,
+                                      amqp_cstring_bytes(messagebody)),
+                   "Publishing");
+      printf("messageb = %s\n",ptf);
+      printf("published\n");
+      //}
 
-  }
-  printf("messagebody = %s\n",ptf);
-  printf("published\n");
   die_on_amqp_error(amqp_channel_close(conn,2,AMQP_REPLY_SUCCESS),"Closing channel");
   die_on_amqp_error(amqp_connection_close(conn,AMQP_REPLY_SUCCESS),"Closing connection");
   die_on_error(amqp_destroy_connection(conn),"Ending connection");
+
 }
 
 void* receive(void *ptr)
 {
 
-  printf("starting receive\n");
+  printf("client2 starting receive\n");
   //char const *const *argv = ptr;
   char const *hostname;
   int port, status;
@@ -176,16 +178,26 @@ void* receive(void *ptr)
                (char *) envelope.message.properties.content_type.bytes);
       }
       printf("----\n");
+      amqp_bytes_t id = envelope.message.properties.correlation_id;
+
 
       amqp_dump(envelope.message.body.bytes, envelope.message.body.len);
       amqp_destroy_envelope(&envelope);
 
-      pthread_cond_signal(&cond);
+      pthread_t thread1;
+      int iret1;
+      //char * msg1 = "hello two";
+      iret1 = pthread_create(&thread1,NULL,send_msg_async,(void*)id);
+      if(iret1){
+        fprintf(stderr,"Error -");
+        exit(EXIT_FAILURE);
+      }
+      pthread_join(thread1,NULL);
+
     }
 
 
   }
-
 
   die_on_amqp_error(amqp_channel_close(conn, 1, AMQP_REPLY_SUCCESS),"Closing channel");
   die_on_amqp_error(amqp_connection_close(conn,AMQP_REPLY_SUCCESS),"Closing connection");
@@ -195,18 +207,11 @@ void* receive(void *ptr)
 
 int main()
 {
-  int iret1,iret2;
-  char * msg1 = "hello tow";
-  pthread_t thread1,thread2 ;
+  int iret2;
+  pthread_t thread2 ;
 
-  pthread_mutex_init(&mutex,NULL);
-  pthread_cond_init(&cond,NULL);
 
-  iret1 = pthread_create(&thread1,NULL,send_msg_async,(void*)msg1);
-  if(iret1){
-    fprintf(stderr,"Error -");
-    exit(EXIT_FAILURE);
-  }
+
 
   iret2 = pthread_create(&thread2,NULL,receive,NULL);
   if(iret2){
@@ -215,10 +220,7 @@ int main()
   }
 
 
-  pthread_join(thread1,NULL);
   pthread_join(thread2,NULL);
 
-  pthread_mutex_destroy(&mutex);
-  pthread_cond_destroy(&cond);
   exit(EXIT_SUCCESS);
 }

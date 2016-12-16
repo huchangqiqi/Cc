@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <unistd.h>
 #include <amqp_tcp_socket.h>
 #include <amqp.h>
 #include <amqp_framing.h>
@@ -13,6 +14,7 @@ int main(int argc, char *argv[])
   char const *hostname;
   int port, status;
   char const *exchange;
+  char const *bindingkey;
   char const *routingkey;
   char const *messagebody;
   amqp_socket_t *socket = NULL;
@@ -28,6 +30,7 @@ int main(int argc, char *argv[])
   exchange=argv[3];
   routingkey=argv[4];
   messagebody = argv[5];
+
   /*
    * establish a channel that is used to connect RabbitMQ server
    */
@@ -48,7 +51,7 @@ int main(int argc, char *argv[])
   die_on_amqp_error(amqp_get_rpc_reply(conn), "Opening channel");
 
   /*
-   * create private reple_to queue
+   * create private reply_to queue
    */
 
   {
@@ -61,6 +64,8 @@ int main(int argc, char *argv[])
       return 1;
     }
   }
+
+
   /*
    * send the message
    */
@@ -82,12 +87,18 @@ int main(int argc, char *argv[])
       fprintf(stderr, "Out of memory while copying queue name");
       return 1;
     }
+
     props.correlation_id  = amqp_cstring_bytes("1");
+
+    printf("reply_to_queue = %s\n", reply_to_queue.bytes);
+    bindingkey  = props.reply_to.bytes;
 
     /*
      * publish
      */
 
+    for(;;){
+    sleep(1);
     die_on_error(amqp_basic_publish(conn,
                                     1,
                                     amqp_cstring_bytes(exchange),
@@ -97,6 +108,7 @@ int main(int argc, char *argv[])
                                     &props,
                                     amqp_cstring_bytes(messagebody)),
                  "Publishing");
+    }
     amqp_bytes_free(props.reply_to);
   }
 
@@ -105,11 +117,46 @@ int main(int argc, char *argv[])
    */
 
   {
+    amqp_queue_bind(conn, 1, reply_to_queue, amqp_cstring_bytes(exchange),amqp_cstring_bytes(bindingkey),
+                    amqp_empty_table);
+    die_on_amqp_error(amqp_get_rpc_reply(conn),"Binding queue");
     amqp_basic_consume(conn, 1, reply_to_queue, amqp_empty_bytes, 0, 1, 0, amqp_empty_table);
     die_on_amqp_error(amqp_get_rpc_reply(conn), "Consuming");
-    amqp_bytes_free(reply_to_queue);
+    //amqp_bytes_free(reply_to_queue);
 
     {
+      for(;;){
+        amqp_rpc_reply_t res;
+        amqp_envelope_t envelope;
+        printf("before res\n");
+
+        amqp_maybe_release_buffers(conn);
+        res = amqp_consume_message(conn,&envelope,NULL,0);
+
+        if(AMQP_RESPONSE_NORMAL != res.reply_type){
+          printf("break\n");
+          break;
+        }
+
+        printf("Delivery %u , exchange %.*s routingkey %.*s\n",
+               (unsigned) envelope.delivery_tag,
+               (int) envelope.exchange.len,(char *)envelope.exchange.bytes,
+               (int) envelope.routing_key.len, (char *) envelope.routing_key.bytes);
+
+        if (envelope.message.properties._flags & AMQP_BASIC_CONTENT_TYPE_FLAG) {
+          printf("Content-type: %.*s\n",
+                 (int) envelope.message.properties.content_type.len,
+                 (char *) envelope.message.properties.content_type.bytes);
+        }
+        printf("----\n");
+        amqp_dump(envelope.message.body.bytes, envelope.message.body.len);
+        amqp_destroy_envelope(&envelope);
+      }
+    }
+
+    /*
+    {
+
       amqp_frame_t frame;
       int result;
 
@@ -129,6 +176,9 @@ int main(int argc, char *argv[])
         if(frame.frame_type != AMQP_FRAME_METHOD){
           continue;
         }
+
+        //amqp_method_t method = frame.payload.method;
+
         d = (amqp_basic_deliver_t *) frame.payload.method.decoded;
         printf("Delivery: %u exchange : %.*s routingkey: %.*s\n",
                (unsigned) d->delivery_tag,
@@ -173,11 +223,11 @@ int main(int argc, char *argv[])
 
         break;
       }
+
+
     }
+    */
   }
-  /*
-   * closing
-   */
 
   die_on_amqp_error(amqp_channel_close(conn, 1, AMQP_REPLY_SUCCESS),"Closing channel");
   die_on_amqp_error(amqp_connection_close(conn, AMQP_REPLY_SUCCESS), "Closing connection");
