@@ -2,15 +2,71 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include <unistd.h>
 #include <amqp.h>
 #include <amqp_tcp_socket.h>
 #include <amqp_framing.h>
 
+#include "user.pb-c.h"
 #include "utils.h"
+
+#define ID_LEN  11
+#define NAME_LEN 32
+#define ADDR_LEN 96
+#define PHONE_LEN 12
+
+static int malloc_user_info(User *user){
+  user->id = (char *)malloc(ID_LEN);
+  user->name = (char *)malloc(NAME_LEN);
+  user->address = (char *)malloc(ADDR_LEN);
+  user->phone = (char *)malloc(PHONE_LEN);
+
+}
+
+
+
+
+static void set_user_info(User *user)
+{
+  const char *id = "20161220";
+  const char *name = "tom";
+  const char *address = "chengdu";
+  const char *phone = "18883808948";
+
+  strncpy(user->id,id,ID_LEN);
+  strncpy(user->name,name,NAME_LEN);
+  user->age = 22;
+  strncpy(user->address,address,ADDR_LEN);
+  strncpy(user->phone,phone,PHONE_LEN);
+}
+
+
+
+void cb_fun(void * cb_para,void * back_msg){
+  printf("cb_fun\n");
+}
+
+struct msg_cb_contex{
+  unsigned int msg_no;
+  void (* cb_fun)(void *cb_para,void *back_msg);
+  void *cb_para;
+};
+
+unsigned int generate_msg_no(){
+  static unsigned int msg_no = 0;
+  static pthread_mutex_t no_mutex;
+  pthread_mutex_lock(&no_mutex);
+  unsigned int ret = msg_no++;
+  pthread_mutex_unlock(&no_mutex);
+  return ret;
+}
+
+struct msg_cb_contex box[20];
 
 void* send_msg_async(void *ptf)
 {
+
   printf("client1 starting send msg\n");
   char const *hostname;
   int port, status;
@@ -53,7 +109,10 @@ void* send_msg_async(void *ptf)
 
     sleep(1);
     amqp_basic_properties_t props;
-    props._flags = AMQP_BASIC_CONTENT_TYPE_FLAG | AMQP_BASIC_DELIVERY_MODE_FLAG;
+    props._flags = AMQP_BASIC_CONTENT_TYPE_FLAG |
+      AMQP_BASIC_DELIVERY_MODE_FLAG |
+      AMQP_BASIC_CORRELATION_ID_FLAG;
+
     props.content_type = amqp_cstring_bytes("text/plain");
     props.delivery_mode =2;
 
@@ -71,7 +130,7 @@ void* send_msg_async(void *ptf)
                                     amqp_cstring_bytes(messagebody)),
                  "Publishing");
 
-    printf("messagebody = %s\n",ptf);
+    //printf("messagebody  = %s\n",ptf);
     printf("published\n");
 
   }
@@ -164,6 +223,10 @@ void* receive(void *ptr)
         break;
       }
 
+      char*  id = (char *) envelope.message.properties.correlation_id.bytes;
+
+      printf("callback ------------ id = %s\n",id);
+
       printf("envelope.exchange = %s\n",(char *)envelope.exchange.bytes);
 
       printf("Delivery %u , exchange %.*s routingkey %.*s\n",
@@ -191,12 +254,24 @@ void* receive(void *ptr)
 
 int main()
 {
+  printf("main\n");
   int iret1,iret2;
-  char * msg1 = "hello one";
+  User user = USER__INIT;
+  void * buf = NULL;
+  unsigned int len;
+  if(malloc_user_info(&user) == -1){
+    exit(0);
+  }
+  set_user_info(&user);
+  len = user__get_packed_size(&user);
+  buf = malloc(len);
+  user__pack(&user,buf);
+
+  //char * msg1 = "hello one";
   pthread_t thread1,thread2 ;
 
 
-  iret1 = pthread_create(&thread1,NULL,send_msg_async,(void*)msg1);
+  iret1 = pthread_create(&thread1,NULL,send_msg_async,(void*)buf);
   if(iret1){
     fprintf(stderr,"Error -");
     exit(EXIT_FAILURE);

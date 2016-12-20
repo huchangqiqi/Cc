@@ -2,16 +2,51 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include <unistd.h>
 #include <amqp.h>
 #include <amqp_tcp_socket.h>
 #include <amqp_framing.h>
 
+#include "user.pb-c.h"
 #include "utils.h"
+
+static void free_student_info(User *user)
+{
+  free(user->id);
+  user->id = NULL;
+  free(user->name);
+  user->name = NULL;
+  free(user->address);
+  user->address = NULL;
+  free(user->phone);
+  user->phone = NULL;
+
+}
+
+
+
+void print_user_info(User *user)
+{
+  printf("id: %s\n",user->id);
+  printf("name: %s\n",user->name);
+  printf("age: %d\n",user->age);
+  printf("address: %s\n",user->address);
+  printf("phone: %s\n",user->phone);
+
+}
+
+int fib(int n){
+  if(n == 0) return 0;
+  if(n == 1) return 1;
+  return fib(n-1) + fib(n-2);
+}
+
 
 void* send_msg_async(void *ptf)
 {
   printf("client 2 starting send msg\n");
+  printf("client2 send message-------------id = %s\n",(char *)ptf);
   char const *hostname;
   int port, status;
   char const *exchange;
@@ -26,7 +61,14 @@ void* send_msg_async(void *ptf)
   exchange = "reply";
   exchangetype = "direct";
   routingkey = "reply";
-  messagebody = "hello two";
+
+  int num = atoi(ptf);
+  int answer = fib(num);
+
+  char buff[20];
+  snprintf(buff,sizeof(buff),"%d",answer);
+
+  messagebody = buff;
 
 
   conn = amqp_new_connection();
@@ -38,8 +80,8 @@ void* send_msg_async(void *ptf)
   if(status){
     die("opening TCP socket");
   }
+
   {
-    //printf("connectioning \n");
   die_on_amqp_error(amqp_login(conn,"/",0,131072,0,AMQP_SASL_METHOD_PLAIN,"guest","guest"),
                     "Logging in");
 
@@ -57,11 +99,15 @@ void* send_msg_async(void *ptf)
 
   //for(int i = 0; i< 10; i++){
   //sleep(1);
+
       amqp_basic_properties_t props;
-      props._flags = AMQP_BASIC_CONTENT_TYPE_FLAG | AMQP_BASIC_DELIVERY_MODE_FLAG;
+      props._flags = AMQP_BASIC_CONTENT_TYPE_FLAG |
+        AMQP_BASIC_DELIVERY_MODE_FLAG |
+        AMQP_BASIC_CORRELATION_ID_FLAG;
       props.content_type = amqp_cstring_bytes("text/plain");
       props.delivery_mode = 2;
-      props.correlation_id = ptf;
+      props.correlation_id = amqp_cstring_bytes(ptf);
+
       die_on_error(amqp_basic_publish(conn,
                                       2,
                                       amqp_cstring_bytes(exchange),
@@ -71,7 +117,6 @@ void* send_msg_async(void *ptf)
                                       &props,
                                       amqp_cstring_bytes(messagebody)),
                    "Publishing");
-      printf("messageb = %s\n",ptf);
       printf("published\n");
       //}
 
@@ -177,23 +222,25 @@ void* receive(void *ptr)
                (int) envelope.message.properties.content_type.len,
                (char *) envelope.message.properties.content_type.bytes);
       }
+
       printf("----\n");
-      amqp_bytes_t id = envelope.message.properties.correlation_id;
+      char*  id = (char *) envelope.message.properties.correlation_id.bytes;
+      User *msg = user__unpack(NULL,envelope.message.body.len,envelope.message.body.bytes);
+      //amqp_dump(envelope.message.body.bytes, envelope.message.body.len);
 
-
-      amqp_dump(envelope.message.body.bytes, envelope.message.body.len);
-      amqp_destroy_envelope(&envelope);
+      print_user_info(msg);
 
       pthread_t thread1;
       int iret1;
-      //char * msg1 = "hello two";
-      iret1 = pthread_create(&thread1,NULL,send_msg_async,(void*)id);
+      printf("---------- id = %s\n",id);
+      iret1 = pthread_create(&thread1,NULL,send_msg_async,(void *) id);
       if(iret1){
         fprintf(stderr,"Error -");
         exit(EXIT_FAILURE);
       }
       pthread_join(thread1,NULL);
 
+      amqp_destroy_envelope(&envelope);
     }
 
 

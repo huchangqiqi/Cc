@@ -19,3 +19,9 @@
 ** TODO 
    SCHEDULED: <2016-12-10 六>
    https://github.com/trending/python
+** TODO 
+   [2016-12-20 二]
+   [[file:~/CODE/C/rabbitmqc/client1.c][file:~/CODE/C/rabbitmqc/client1.c]]
+** TODO  
+   SCHEDULED: <2016-12-20 二>
+   [[http://www.cnblogs.com/lienhua34/]]
