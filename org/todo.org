@@ -36,3 +36,26 @@
 *** TODO mooc
 * webbook
 [[https://www.emacswiki.org/emacs?interface=zh-cn]]
+* Project ABC 
+** TODO read book 122
+   SCHEDULED: <2016-11-26 Sat>
+** TODO write page 
+* Project XYZ 
+** TODO a task
+   SCHEDULED: <2016-11-27 Sun>
+** TODO another task
+* 数据库系统 下 DEADLINE: <2016-12-31 Sat 12:00>
+** TODO [[http://www.icourse163.org/learn/HIT-1001578001?tid=1001784018#/learn/content]]
+* nodejs 
+** DONE [[http://study.163.com/course/courseLearn.htm?courseId=1002857016#/learn/video?lessonId=1003242318&courseId=1002857016]]
+   CLOSED: [2016-11-27 Sun 15:51] SCHEDULED: <2016-11-27 Sun>
+** TODO javascript  
+*** TODO 
+    廖雪峰[[http://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000/00143449921138898cdeb7fc2214dc08c6c67827758cd2f000]]
+* Tasks 
+  SCHEDULED: <2016-11-30 Wed>
+** TODO Most
+   SCHEDULED: <2016-11-25 Fri>
+** TODO Sec
+   SCHEDULED: <2016-11-23 Wed>
+** TODO Etc

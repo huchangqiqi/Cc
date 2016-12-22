@@ -1,0 +1,7 @@
+* npm 换源 
+  npm config set registry http://registry.npm.taobao.org
+* 权限
+  sudo chown -R $(whoami) $(npm config get prefix)/{lib/node_modules,bin,share}
+
+  
+  
