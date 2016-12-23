@@ -30,4 +30,8 @@
    [[file:~/todo.org::*Tasks][Tasks]]
 ** 站立办公
    1. 把站立的重心移到脚掌内侧
-
+** TODO 
+   [2016-12-22 四]
+   [[file:~/CODE/latex/hello.tex::Hello,%20world!]]
+** linux latex 资源
+   [[http://cs2.swfc.edu.cn/~wx672/lecture_notes/linux/]]
