@@ -32,7 +32,6 @@ static int malloc_user_info(User *user){
   return 0;
 }
 
-
 static void set_user_info(User *user)
 {
   const char *id = "20161220";
@@ -49,7 +48,7 @@ static void set_user_info(User *user)
 
 
 void cb_fun(void * cb_para,void * back_msg){
-  printf("cb_fun\n");
+  printf("cb_fun %s\n",back_msg);
 }
 
 struct msg_cb_contex{
@@ -146,6 +145,7 @@ void* receive(void *ptr)
       printf("----\n");
 
       amqp_dump(envelope.message.body.bytes, envelope.message.body.len);
+
       amqp_destroy_envelope(&envelope);
     }
   }

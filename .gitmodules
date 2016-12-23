@@ -1,0 +1,3 @@
+[submodule "Cpp/SimpleAmqpClient"]
+	path = Cpp/SimpleAmqpClient
+	url = git@github.com:alanxz/SimpleAmqpClient.git
