@@ -55,7 +55,6 @@
    #+RESULTS: py
    : None
 
-
 * agenda 
 ** 
      todo
@@ -74,6 +73,9 @@
   pip install --upgrade "jedi>=0.9.0" "json-rpc>=1.8.1" "service_factory>=0.1.5"
 
 * manjaro
-vim /etc/pacman-mirrors.conf
-onlyCountry=China
-pacman-mirrors -g
+  vim /etc/pacman-mirrors.conf
+  onlyCountry=China
+  pacman-mirrors -g
+
+* customize-variables 
+  customize-variables tex-view-program-list

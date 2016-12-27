@@ -1,8 +1,47 @@
 \documentclass{article}
 \begin{document}
 \title{How to Structure a \LaTeX{} Document}
-\author{spike}
-Hello, world!
+\author{spike \\
+  School of Computing, \\
+  CQUPT,\\
+  \emph{479381142@qq.com}}
+\date{2016/12/23}
+\maketitle{}
+\begin{abstract}
+  In this article, I shall discuss some of the fundamental topics in
+  producing a structured document.  This document itself does not go into
+  much depth, but is instead the output of an example of how to implement
+  structure. Its \LaTeX{} source, when in used with my tutorial
+  provides all the relevant information.
+\end{abstract}
+
+\section{title}
+\label{sec:introduction}
+
+  This small document is designed to illustrate how easy it is to create a well structured
+  document within \LaTeX\cite{lamport94}.  You should quickly be able to see how the article
+  looks very professional, despite the content being far from academic.  Titles, section
+  headings, justified text, text formatting etc., is all there, and you would be surprised
+ when you see just how little markup was required to get this output.
+
+\subsection{Top Matter}
+\label{sec:top-matter}
+
+ The first thing you normally have is a title of the document, as well as
+ information about the author and date of publication.  In \LaTeX{} terms,
+ this is all generally referred to as \emph{top matter}.
+
+\subsection{Ariticle Information}
+\label{sec:article-information}
+
+\begin{itemize}
+\item \verb|title{}| --- The title of the article.
+\item \verb|\date |--- The date. Use 使用:
+  \begin{itemize}
+  \item 
+  \end{itemize}
+\end{itemize}
+
 \end{document}
 
 

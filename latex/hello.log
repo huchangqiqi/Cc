@@ -1,12 +1,10 @@
-This is XeTeX, Version 3.14159265-2.6-0.99996 (TeX Live 2016/Arch Linux) (preloaded format=xelatex 2016.12.23)  23 DEC 2016 09:46
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016/Arch Linux) (preloaded format=pdflatex 2016.12.23)  23 DEC 2016 14:40
 entering extended mode
  restricted \write18 enabled.
+ file:line:error style messages enabled.
  %&-line parsing enabled.
-**hello.tex
-(./hello.tex
-LaTeX2e <2016/03/31> patch level 3
-Babel <3.9r> and hyphenation patterns for 83 language(s) loaded.
-(/usr/share/texmf-dist/tex/latex/base/article.cls
+**\input hello.tex
+(./hello.tex (/usr/share/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
 (/usr/share/texmf-dist/tex/latex/base/size10.clo
 File: size10.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
@@ -22,8 +20,7 @@ File: size10.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
 \abovecaptionskip=\skip41
 \belowcaptionskip=\skip42
 \bibindent=\dimen102
-)
-No file hello.aux.
+) (./hello.aux)
 \openout1 = `hello.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 2.
@@ -38,16 +35,68 @@ LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 2.
 LaTeX Font Info:    ... okay on input line 2.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 2.
 LaTeX Font Info:    ... okay on input line 2.
-[1
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <17.28> on input line 9.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 9.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 9.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 9.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <9> on input line 14.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 14.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 22.
 
-] (./hello.aux) ) 
+
+LaTeX Warning: Citation `lamport94' on page 1 undefined on input line 22.
+
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 38.
+(/usr/share/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 38.
+Missing character: There is no ä in font cmr10!
+Missing character: There is no ½ in font cmr10!
+Missing character: There is no ¿ in font cmr10!
+Missing character: There is no ç in font cmr10!
+Missing character: There is no ” in font cmr10!
+Missing character: There is no ¨ in font cmr10!
+ [1
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./hello.aux)
+
+LaTeX Warning: There were undefined references.
+
+ ) 
 Here is how much of TeX's memory you used:
- 197 strings out of 493589
- 1983 string characters out of 6148799
- 53785 words of memory out of 5000000
- 3697 multiletter control sequences out of 15000+600000
- 3640 words of font info for 14 fonts, out of 8000000 for 9000
- 1347 hyphenation exceptions out of 8191
- 23i,4n,17p,129b,107s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 271 strings out of 493013
+ 2999 string characters out of 6139316
+ 56632 words of memory out of 5000000
+ 3880 multiletter control sequences out of 15000+600000
+ 10591 words of font info for 37 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 23i,6n,21p,142b,233s stack positions out of 5000i,500n,10000p,200000b,80000s
+ </home/spike/.texlive/texmf-var/fonts/pk/ljfour/public/cm/cmtt10.600pk> </us
+r/share/texmf-dist/fonts/pk/ljfour/public/cm/dpi600/cmsy10.pk> </usr/share/texm
+f-dist/fonts/pk/ljfour/public/cm/dpi600/cmti10.pk> </home/spike/.texlive/texmf-
+var/fonts/pk/ljfour/public/cm/cmbx12.600pk> </usr/share/texmf-dist/fonts/pk/ljf
+our/public/cm/dpi600/cmbx10.pk> </usr/share/texmf-dist/fonts/pk/ljfour/public/c
+m/dpi600/cmr7.pk> </usr/share/texmf-dist/fonts/pk/ljfour/public/cm/dpi600/cmr10
+.pk> </home/spike/.texlive/texmf-var/fonts/pk/ljfour/public/cm/cmbx12.720pk> </
+usr/share/texmf-dist/fonts/pk/ljfour/public/cm/dpi600/cmr6.pk> </home/spike/.te
+xlive/texmf-var/fonts/pk/ljfour/public/cm/cmr9.600pk> </home/spike/.texlive/tex
+mf-var/fonts/pk/ljfour/public/cm/cmbx9.600pk> </home/spike/.texlive/texmf-var/f
+onts/pk/ljfour/public/cm/cmti12.600pk> </usr/share/texmf-dist/fonts/pk/ljfour/p
+ublic/cm/dpi600/cmr12.pk> </usr/share/texmf-dist/fonts/pk/ljfour/public/cm/dpi6
+00/cmr17.pk>
+Output written on hello.pdf (1 page, 55329 bytes).
+PDF statistics:
+ 246 PDF objects out of 1000 (max. 8388607)
+ 60 compressed objects within 1 object stream
+ 0 named destinations out of 1000 (max. 500000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
-Output written on hello.pdf (1 page).

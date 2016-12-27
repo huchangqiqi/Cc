@@ -9,6 +9,7 @@
 #include <amqp_framing.h>
 
 #include "user.pb-c.h"
+#include "test.pb-c.h"
 #include "utils.h"
 
 struct back_msg{
@@ -45,7 +46,15 @@ void print_user_info(User *user)
   printf("age: %d\n",user->age);
   printf("address: %s\n",user->address);
   printf("phone: %s\n",user->phone);
+  printf("corpus: %d\n",user->corpus);
 
+}
+
+void print_sr(SearchRequest *sr){
+  printf("query : %s\n",sr->query);
+  printf("page_number : %d\n",sr->page_number);
+  printf("result_per_page : %d\n",sr->result_per_page);
+  printf("corpus : %d\n",sr->corpus);
 }
 
 int fib(int n){
@@ -54,7 +63,17 @@ int fib(int n){
   return fib(n-1) + fib(n-2);
 }
 
+void unserialization(int len, const uint8_t * data){
+  User *msg = user__unpack(NULL,len,data);
+  print_user_info(msg);
+  /*
+    SearchRequest  * sr = search_request__unpack(NULL,envelope.message.body.len,envelope.message.body.bytes);
+    print_sr(sr);
 
+  */
+
+
+}
 
 void* send_msg_async(void *ptr)
 {
@@ -62,8 +81,6 @@ void* send_msg_async(void *ptr)
   struct para *p = (struct para *)ptr;
   printf("client 2 starting send msg\n");
   char const *messagebody;
-
-
 
   struct back_msg * b_msg = (struct back_msg *)p->bmsg;
   messagebody = b_msg->msg;
@@ -132,15 +149,12 @@ void* receive(void *ptr)
       }
       printf("----\n");
       char*  id = (char *) envelope.message.properties.correlation_id.bytes;
+
       //amqp_dump(envelope.message.body.bytes, envelope.message.body.len);
 
-      User *msg = user__unpack(NULL,envelope.message.body.len,envelope.message.body.bytes);
-
-      print_user_info(msg);
+      unserialization(envelope.message.body.len,envelope.message.body.bytes);
       int fib_id = f(atoi(id));
       printf("fib = %d\n",fib_id);
-
-
       char buff[20];
       snprintf(buff,sizeof(buff),"%d",fib_id);
 

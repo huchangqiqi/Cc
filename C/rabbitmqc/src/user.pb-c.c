@@ -50,50 +50,12 @@ void   user__free_unpacked
   assert(message->base.descriptor == &user__descriptor);
   protobuf_c_message_free_unpacked ((ProtobufCMessage*)message, allocator);
 }
-static const ProtobufCEnumValue user__corpus__enum_values_by_number[7] =
-{
-  { "UNIVERSAL", "USER__CORPUS__UNIVERSAL", 0 },
-  { "WEB", "USER__CORPUS__WEB", 1 },
-  { "IMAGES", "USER__CORPUS__IMAGES", 2 },
-  { "LOCAL", "USER__CORPUS__LOCAL", 3 },
-  { "NEWS", "USER__CORPUS__NEWS", 4 },
-  { "PRODUCTS", "USER__CORPUS__PRODUCTS", 5 },
-  { "VIDEO", "USER__CORPUS__VIDEO", 6 },
-};
-static const ProtobufCIntRange user__corpus__value_ranges[] = {
-{0, 0},{0, 7}
-};
-static const ProtobufCEnumValueIndex user__corpus__enum_values_by_name[7] =
-{
-  { "IMAGES", 2 },
-  { "LOCAL", 3 },
-  { "NEWS", 4 },
-  { "PRODUCTS", 5 },
-  { "UNIVERSAL", 0 },
-  { "VIDEO", 6 },
-  { "WEB", 1 },
-};
-const ProtobufCEnumDescriptor user__corpus__descriptor =
-{
-  PROTOBUF_C__ENUM_DESCRIPTOR_MAGIC,
-  "User.Corpus",
-  "Corpus",
-  "User__Corpus",
-  "",
-  7,
-  user__corpus__enum_values_by_number,
-  7,
-  user__corpus__enum_values_by_name,
-  1,
-  user__corpus__value_ranges,
-  NULL,NULL,NULL,NULL   /* reserved[1234] */
-};
-static const ProtobufCFieldDescriptor user__field_descriptors[6] =
+static const ProtobufCFieldDescriptor user__field_descriptors[5] =
 {
   {
     "id",
     1,
-    PROTOBUF_C_LABEL_REQUIRED,
+    PROTOBUF_C_LABEL_OPTIONAL,
     PROTOBUF_C_TYPE_STRING,
     0,   /* quantifier_offset */
     offsetof(User, id),
@@ -105,7 +67,7 @@ static const ProtobufCFieldDescriptor user__field_descriptors[6] =
   {
     "name",
     2,
-    PROTOBUF_C_LABEL_REQUIRED,
+    PROTOBUF_C_LABEL_OPTIONAL,
     PROTOBUF_C_TYPE_STRING,
     0,   /* quantifier_offset */
     offsetof(User, name),
@@ -117,9 +79,9 @@ static const ProtobufCFieldDescriptor user__field_descriptors[6] =
   {
     "age",
     3,
-    PROTOBUF_C_LABEL_REQUIRED,
+    PROTOBUF_C_LABEL_OPTIONAL,
     PROTOBUF_C_TYPE_INT32,
-    0,   /* quantifier_offset */
+    offsetof(User, has_age),
     offsetof(User, age),
     NULL,
     NULL,
@@ -129,7 +91,7 @@ static const ProtobufCFieldDescriptor user__field_descriptors[6] =
   {
     "address",
     4,
-    PROTOBUF_C_LABEL_REQUIRED,
+    PROTOBUF_C_LABEL_OPTIONAL,
     PROTOBUF_C_TYPE_STRING,
     0,   /* quantifier_offset */
     offsetof(User, address),
@@ -141,7 +103,7 @@ static const ProtobufCFieldDescriptor user__field_descriptors[6] =
   {
     "phone",
     5,
-    PROTOBUF_C_LABEL_REQUIRED,
+    PROTOBUF_C_LABEL_OPTIONAL,
     PROTOBUF_C_TYPE_STRING,
     0,   /* quantifier_offset */
     offsetof(User, phone),
@@ -150,23 +112,10 @@ static const ProtobufCFieldDescriptor user__field_descriptors[6] =
     0,             /* flags */
     0,NULL,NULL    /* reserved1,reserved2, etc */
   },
-  {
-    "corpus",
-    6,
-    PROTOBUF_C_LABEL_REQUIRED,
-    PROTOBUF_C_TYPE_ENUM,
-    0,   /* quantifier_offset */
-    offsetof(User, corpus),
-    &user__corpus__descriptor,
-    NULL,
-    0,             /* flags */
-    0,NULL,NULL    /* reserved1,reserved2, etc */
-  },
 };
 static const unsigned user__field_indices_by_name[] = {
   3,   /* field[3] = address */
   2,   /* field[2] = age */
-  5,   /* field[5] = corpus */
   0,   /* field[0] = id */
   1,   /* field[1] = name */
   4,   /* field[4] = phone */
@@ -174,7 +123,7 @@ static const unsigned user__field_indices_by_name[] = {
 static const ProtobufCIntRange user__number_ranges[1 + 1] =
 {
   { 1, 0 },
-  { 0, 6 }
+  { 0, 5 }
 };
 const ProtobufCMessageDescriptor user__descriptor =
 {
@@ -184,7 +133,7 @@ const ProtobufCMessageDescriptor user__descriptor =
   "User",
   "",
   sizeof(User),
-  6,
+  5,
   user__field_descriptors,
   user__field_indices_by_name,
   1,  user__number_ranges,

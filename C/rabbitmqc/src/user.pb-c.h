@@ -20,16 +20,6 @@ typedef struct _User User;
 
 /* --- enums --- */
 
-typedef enum _User__Corpus {
-  USER__CORPUS__UNIVERSAL = 0,
-  USER__CORPUS__WEB = 1,
-  USER__CORPUS__IMAGES = 2,
-  USER__CORPUS__LOCAL = 3,
-  USER__CORPUS__NEWS = 4,
-  USER__CORPUS__PRODUCTS = 5,
-  USER__CORPUS__VIDEO = 6
-    PROTOBUF_C__FORCE_ENUM_TO_BE_INT_SIZE(USER__CORPUS)
-} User__Corpus;
 
 /* --- messages --- */
 
@@ -38,14 +28,14 @@ struct  _User
   ProtobufCMessage base;
   char *id;
   char *name;
+  protobuf_c_boolean has_age;
   int32_t age;
   char *address;
   char *phone;
-  User__Corpus corpus;
 };
 #define USER__INIT \
  { PROTOBUF_C_MESSAGE_INIT (&user__descriptor) \
-    , NULL, NULL, 0, NULL, NULL, 0 }
+    , NULL, NULL, 0,0, NULL, NULL }
 
 
 /* User methods */
@@ -79,7 +69,6 @@ typedef void (*User_Closure)
 /* --- descriptors --- */
 
 extern const ProtobufCMessageDescriptor user__descriptor;
-extern const ProtobufCEnumDescriptor    user__corpus__descriptor;
 
 PROTOBUF_C__END_DECLS
 

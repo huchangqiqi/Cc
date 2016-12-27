@@ -9,12 +9,15 @@
 #include <amqp_framing.h>
 
 #include "user.pb-c.h"
+#include "test.pb-c.h"
 #include "utils.h"
 
 #define ID_LEN  11
 #define NAME_LEN 32
 #define ADDR_LEN 96
 #define PHONE_LEN 12
+
+#define QUERY_LEN 20
 
 struct para{
   amqp_connection_state_t conn;
@@ -24,11 +27,19 @@ struct para{
   char const *msg;
 };
 
+
 static int malloc_user_info(User *user){
   user->id = (char *)malloc(ID_LEN);
   user->name = (char *)malloc(NAME_LEN);
+  user->age = 10;
   user->address = (char *)malloc(ADDR_LEN);
   user->phone = (char *)malloc(PHONE_LEN);
+  user->corpus = 4;
+  return 0;
+}
+
+static int malloc_sr(SearchRequest *sr){
+  sr->query = (char *)malloc(QUERY_LEN);
   return 0;
 }
 
@@ -44,8 +55,61 @@ static void set_user_info(User *user)
   user->age = 22;
   strncpy(user->address,address,ADDR_LEN);
   strncpy(user->phone,phone,PHONE_LEN);
+  user->corpus = 4;
 }
 
+
+static void set_SearchRequest(SearchRequest *sr){
+  const char *query = "123";
+  int32_t page_number = 1;
+  int32_t result_per_page = 2;
+  SearchRequest__Corpus corpus = 4;
+
+  strncpy(sr->query,query,QUERY_LEN);
+  sr->page_number = page_number;
+  sr->result_per_page = result_per_page;
+  sr->corpus = corpus;
+}
+
+void print_sr(SearchRequest *sr){
+  printf("query : %s\n",sr->query);
+  printf("page_number : %d\n",sr->page_number);
+  printf("result_per_page : %d\n",sr->result_per_page);
+  printf("corpus : %d\n",sr->corpus);
+}
+
+
+void * serialization(){
+  void *buf = NULL;
+  User user = USER__INIT;
+  unsigned int len1;
+  if(malloc_user_info(&user) == -1){
+    exit(0);
+  }
+  set_user_info(&user);
+  len1 = user__get_packed_size(&user);
+  buf = malloc(len1);
+  user__pack(&user,buf);
+  return buf;
+
+  /*
+    SearchRequest sr = SEARCH_REQUEST__INIT;
+    void *buff = NULL;
+    unsigned int len2;
+    if(malloc_sr(&sr) == -1){
+    exit(0);
+    }
+    set_SearchRequest(&sr);
+    len2 = search_request__get_packed_size(&sr);
+    buff = malloc(len2);
+    search_request__pack(&sr,buff);
+
+    print_sr(&sr);
+  */
+
+
+
+ }
 
 void cb_fun(void * cb_para,void * back_msg){
   printf("cb_fun %s\n",back_msg);
@@ -209,22 +273,12 @@ int main()
                   amqp_empty_table);
   die_on_amqp_error(amqp_get_rpc_reply(conn),"Binding queue");
 
+
+
   int iret1,iret2;
-  User user = USER__INIT;
-  void * buf = NULL;
-  unsigned int len;
-  if(malloc_user_info(&user) == -1){
-    exit(0);
-  }
-
-  set_user_info(&user);
-  len = user__get_packed_size(&user);
-  buf = malloc(len);
-  user__pack(&user,buf);
-
   pthread_t thread1,thread2 ;
 
-  messagebody = buf;
+  messagebody = serialization();
 
   struct para *param = (struct para *)malloc(sizeof(struct para));
   param->conn = conn;
@@ -248,10 +302,12 @@ int main()
   pthread_join(thread1,NULL);
   pthread_join(thread2,NULL);
 
+  free((void *)messagebody);
+  messagebody = NULL;
+
   die_on_amqp_error(amqp_channel_close(conn, 1, AMQP_REPLY_SUCCESS),"Closing channel");
   die_on_amqp_error(amqp_connection_close(conn,AMQP_REPLY_SUCCESS),"Closing connection");
   die_on_error(amqp_destroy_connection(conn), "Ending connection");
-
 
   exit(EXIT_SUCCESS);
 }
