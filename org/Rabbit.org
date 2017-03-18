@@ -8,3 +8,13 @@
  sudo rabbitmq-plugins enable rabbitmq_management
  http://server-name:15672/
  localhost:15672
+* simpleamqpclient
+  . create
+  Creates a new channel object
+  Creates a new connection to an AMQP broker using the supplied parameters and opens a single channel for use
+
+
+  . BasicConsume
+  Starts consuming Basic messages on a queue Subscribes as a consumer to a queue, so all future messages on a queue will be Basic.Delivered
+  Note: due to a limitation to how things are done, it is only possible to reliably have a single consumer per channel, 
+  calling this more than once per channel may result in undefined results from BasicConsumeMessage

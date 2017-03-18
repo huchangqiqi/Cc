@@ -1,0 +1,8 @@
+  /home/spike/CODE/nodejs/node_in_practice/fs:
+  总用量 24
+  drwxr-xr-x 2 spike spike 4096 2月  27 11:35 .
+  drwxr-xr-x 3 spike spike 4096 2月  27 11:35 ..
+  -rw-r--r-- 1 spike spike  785 2月  27 11:29 findAsync.js
+  -rw-r--r-- 1 spike spike  456 2月  27 11:25 findSync.js
+  -rw-r--r-- 1 spike spike  233 2月  27 11:27 fs.js
+  -rw-r--r-- 1 spike spike  132 2月  27 11:35 test_findAsync.js

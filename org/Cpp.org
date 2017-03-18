@@ -1,0 +1,47 @@
+* 函数指针
+  typedef 返回类型(* 新类型)(参数表);
+* share_ptr 
+  // error
+  pc.reset(it->second.get())
+* using 和 typedef
+  1. 定义一般类型的别名没有区别
+  2. 定义模板的别名只能用using 
+* const member function 
+  const member function 相当于 this 是const
+  类中的const变量 必须在初始化列表中初始化
+  class A{
+    const int i; 
+  public :
+    A():i(0){} //const in class has to be init in initializer list of the ctr 
+    void f(){} // void f(A* this){}
+    void f()const{} //等价 void f(const A* this){}
+  }
+* 多线程 
+  [[https://computing.llnl.gov/tutorials/pthreads/]]
+* 
+  # explicit
+  指定构造函数和(C++11起)转换运算符，不允许隐式转换
+
+  # static_cast 
+  static_cast <new_type> (expression)
+  Converts between types using a combination(组合) of implicit (隐式) and user-defined conversions.
+
+  1. 基类和子类直接指针和引用
+     子类转基类 (安全
+     基类转子类 （不安全
+  2. 基本数据类型 int转char int转enum
+  3. void 指针转为目标指针 （不安全
+
+  # dynamic_cast
+  1. 下行转换 具有类型检查
+  2. 多态类型转换
+
+
+  # const_cast
+  1. 移除const volatile
+
+  # reinterpret_cast
+  指针 转 int 然后再用 int 转指针
+* cpp_blog
+  [[http://blog.csdn.net/column/details/cccplusplus.html]]
+  [[http://www.jellythink.com/archives/42]]

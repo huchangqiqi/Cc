@@ -1,0 +1,231 @@
+* sdc-assets 管理在 headnode 和 cn 节点上的 images 存储
+  建立 'assets' zone 供应 headnode file 给 CNs 通过 http
+  在 /boot/configure.sh 中 配置 nginx 服务
+* sdc-rabbitmq 服务器间消息管理
+  在 /boot/configure.sh 中 配置 rabbitmq 服务
+* node-urclient 使用 ur-agent 的高级客户端 客户端允许用户在发现计算节点（服务器）， 将文件复制到这些节点以及从这些节点复制文件，ping 节点以及运行任意命令。
+  这个库提供了两个类：
+  1. URClient，用于通过 AMQP 执行节点发现和与单个节点的 ur-agent 交互的客户端，
+  用于运行命令或传送文件的目的。
+  discover(); Node Discovery
+  ping(); Ping A Node
+  exec(); Execute Script On Node
+  send_file(); Send File To Node
+  recv_file(); Receive File From Node
+
+  2. RunQueue，一个更高级的协调类，能够对增量指定的一组远程 ur-agent 实例执行相同的操作，
+  每个节点执行超时和启动行同步
+** node-urclient/lib/mq.js
+ # urc_amqp 是一个连接
+ mod_amqp = require('amqp');
+ urc_amqp = mod_amqp.createConnection 
+
+ # urc_exchange 是 topic 型 发送消息给 ur agent
+ urc_exchange = urc_amqp.exchange
+ 
+ # urc_queue_name 
+ urc_queue_name = [
+ 'ur',
+ self.urc_consumer_name,
+ mod_uuid.create()
+ ].join('.');
+
+ # urc_queue
+ urc_queue = self.urc_amqp.queue(self.urc_queue_name, {exclusive: true});
+
+ # binding
+				 queue_bindings = [
+					 'ur.execute-reply.*.*',
+					 'ur.startup.#',
+					 'ur.sysinfo.#',
+					 'ur.ack' + self.urc_ping_id + '.*'
+				 ];
+
+			     queue_bindings.forEach(function (qb) {
+				 self.urc_log.debug('amqp bind queue to ' + qb);
+				 self.urc_queue.bind('amq.topic', qb);
+			     });
+* sdc-ur-agent 当 Triton 服务器启动时，它将需要一种基于机器的配置和角色来设置服务器， 启动各种子系统（如 zpool 创建，代理等）的方法。
+  节点代理 Ur 将监听 AMQP 以执行脚本。 然而，重要的是要注意，我们将无法更新操作系统实时映像，
+
+  它做什么
+  Ur 代理连接到 AMQP 代理，发出消息以表示它正在侦听并等待。然后，
+  headnode 将发送要在节点上执行的脚本（由所述 ID 标识），
+  Ur 使用进程返回码和脚本捕获的 STDOUT 和 STDERR 回复。
+  - start up
+  - emit "start up" message
+
+  - receive messages with script to execute
+  - execute script
+  - reply with script exit code and captured stdout and stderr
+  - repeat
+   
+  它怎么工作
+  当计算节点启动时，Ur 将是运行的第一个进程之一。一旦启动，Ur 代理将向 AMQP 发送一条消息。
+  这个消息只是表示，“嘿，我已经开始了，我准备好被告知要做什么。 在这一点上，
+  headnode 将注意到这个新节点存在并且将知道关于其配置的一点。
+  从这一点开始，headnode 可以使用 Ur 设置服务器，读取配置等。
+  - Ur starts up
+  - looks up broker details
+  - connects to broker
+  - emits start up message containing sysinfo payload
+  - headnode records node information
+  
+  Ur-agent 是连接到运行的 rabbitmq 区域的 AMQP 客户端在 DC 中并等待命令。
+  它用于自举和初始化堆栈的设置， 也用于在某些或运行自动化命令给予 DC 中的所有 CN。
+
+  Example
+  在启动时，Ur 将执行 sysinfo 实用程序并使用此信息向 AMQP 发布消息
+  Computenode Start
+  ==> routing-key: ur.startup.<node-id>
+
+  {
+    "Live Image": "20140905T202142Z",
+    "System Type": "SunOS",
+    ...
+  }
+  
+  Executing Commands on Server with Ur
+  <== routing-key: ur.execute.<node-id>.<request-id>
+
+  { type: "file"
+  , file: "scripts/pools.sh"
+  , timestamp: "2010-11-10T..."
+  }
+  
+  Ur execution replies
+  ==> routing-key: ur.execute-reply.<node-id>.<the-request-id>
+
+  { exit_status: 0
+  , stdout: "hello world\n";
+  , stderr: ""
+  }
+** sdc-ur-agent/ur-agent
+   # run a single global UrAgent() if we're not imported elsewhere 
+   # (ie. this file is being run directly.
+   Queue
+   1. ur.ping.nodeUUID  
+   binding 
+   amq.topic ur.ping.nodeUUID
+
+   2. ur.request.nodeUUID
+   binding
+   amq.topic ur.execute.
+   amq.topic ur.broadcast.
+** sdc-ur-agent/ur-driver
+   #headnode
+   exchange = connection.exchange('amq.topic', { type: 'topic' });
+   var queue = connection.queue('ur.'+Math.random());
+
+   queue.bind('amq.topic', 'ur.startup.#');
+   queue.bind('amq.topic', 'ur.execute-reply.*.*');
+
+* sdc-cnapi CNAPI 负责维护计算节点的状态和生命周期阶段。它与计算节点通信，用于创建和销毁任务，启动任务等。
+** cnapi/lib/ur.js
+   ur 构造函数
+   this.queue = 'ur.cnapi';
+   bindQueues 函数
+   queue.bind('ur.startup.#');
+   queue.bind('ur.sysinfo.#');
+  
+   broadcastSysinfo 函数
+   var qname = 'ur.cnapi.' + reqid;
+      this.connection.queue(qname, {
+         autoDelete: true,
+         closeChannelOnUnsubscribe: true
+   }
+   queue.bind('ur.execute-reply.*.' + reqid,
+  
+   execute 函数
+   self.connection.queue(
+       'ur.cnapi.' + reqid,
+       { autoDelete: true, closeChannelOnUnsubscribe: true },
+       onopen);
+      queue.subscribe(). addCallback(function (ok) {
+             queue.bind('ur.execute-reply.' + uuid + '.' + reqid,
+             
+    serverSysinfo 函数 调用 execute 函数 
+    在给定的计算节点上执行 sysinfo 实用程序，然后返回解析对象。
+
+* sdc-cn-agent
+  sdc-cn-agent 是一种 RPC 机制，通过它，客户端可以与计算节点交互。它作为服务器内子系统的外部可见接口。 它负责执行“任务”，将某些工作单元分解成若干步骤的脚本。这可能包括创建虚拟机到创建或列出 ZFS 数据集那样简单。
+  sdc-cn-agent/lib/tasks 里面有要执行的任务脚本 比如 创建虚机 更新网卡
+** sdc-cn-agent/lib/server.js
+   AgentHttpServer 继承了 EventEmitter
+   有个 server 属性 是 restify.createServer 
+   server.use 一些 handler
+   响应一些请求
+* sdc-cloud-analytics/lib/ca/ca-amqp.js 
+  使用以下属性管理与 AMQP 代理的连接：
+  	o a single exchange is used for all messages
+	o a single exclusive queue is used for all received messages
+ 	o all messages are encoded as JSON objects.
+  This manager does three things:
+    o 根据可选项管理到 AMQP 代理的连接 disconnect-retry 策略，自动重新创建队列重新连接并发送在断开连接时排队的邮件。
+    o 代表消费者发送邮件
+    o 通过事件将接收到的消息分发给消费者
+* sdc-heartbeater-agent (已过时)
+  This repository is no longer used by Triton.
+  SDC Heartbeater 代理是在所有计算节点上运行的资源状态服务。
+  它定期向 AMQP 发送一个对象，该对象包含核心，内存和磁盘上的当前使用信息，用于运行服务的服务器的实例和映像。
+* sdc-provisioner-agent (已过时)
+  This repository is no longer used by Triton.
+* sdc-vm-agent
+  SDC VM-agent 是一个用于跟踪 Triton 上的 VM 更改的库。每个计算节点安装一个 VM-agent。
+  VM 更改触发 VMAPI 上的更新，因此数据被保留。 有关 vm-agent 如何工作的更多详细信息，请参阅 lib / vm-agent.js 的标题。
+** lib/vm-agent.js
+   vm-agent 的工作是告诉 VMAPI 有关在 VM 上发生的 VM 的更改 CN。除非出现错误，否则通过 SDC API 在 CN 上执行的操作不应该需要这样，
+   因为 cn-agent 任务在每个之后执行 VM 状态的加载执行操作，并将结果放入 VMAPI。
+* sdc-vmapi
+  VMAPI 是用于在 SDC 安装上管理 VM 的 HTTP API 服务器。
+  特性
+   1. 按照特定条件（如 ram，所有者，标签等）搜索 VM
+   2. 获取有关单个虚拟机的信息
+   3. 创建 VM
+   4. 对现有 VM 执行操作，如启动，停止，重新启动，更新，修改 NIC，销毁等。
+   
+* sdc-cloudapi 
+  CloudAPI 是客户用于与 SmartDataCenter 交互的 HTTP API
+  默认情况下，在 SDC 设置期间不创建 cloudapi。
+  您可以通过在根全局区域（在 COAL 内部或 SDC headnode 服务器上）运行来创建它：
+* node-aperture
+  Aperture 是一种具有灵活的，人类可读的策略语言的访问控制系统，将语言转换为
+  可序列化 JSON 的解析器， 以及评估策略和请求的上下文以确定是允许还是拒绝的评估器。
+* sdc-sapi 它保存所有 SDC 服务的定义
+  它协调 SDC 服务的配置和部署。
+
+  SAPI 是 Services API。此 API 允许 operators (运营商)使用一组松散耦合的联合服务配置，部署和升级软件。
+  SAPI 具有两个主要组件：API 本身和关联的 config-agent 配置代理。还有一个 SAPI 客户端与其余的 SDC 客户端一起交付。
+  # SAPI
+  每个数据中心都有一个 SAPI 区域。该区域是无状态的，并将对象写入其数据中心的 moray 数据库。除了在 moray 中存储其对象之外，它还与 VMAPI 通信以供应区域并且 NAPI 用于保留 NIC 和查找网络 UUID。
+  SAPI 包含三个主要对象类型：应用程序，服务和实例。应用程序具有一个或多个服务，并且服务具有一个或多个实例。实例表示实际区域，这些区域从关联的应用程序和服务继承其区域参数和元数据。
+  每个应用程序，服务和实例都有三组属性:
+  1. params
+  2. metadata
+  3. manifests
+
+  # config-agent
+  每个使用 SAPI 部署的区域都包含一个 agent，负责维护该区域内的配置。config-agent 直接查询 SAPI 以确定要写入哪些文件以及写到哪里。代理使用称为 configuration manifests 配置清单的对象;这些对象描述了区域的配置文件的内容，位置和语义。
+  
+  # configs
+  This set is determined by taking the union of the application's, service's, and instance's data (last one wins)
+  sdc-sapi /configs/:uuid
+
+  # proto and full mode
+* sdc-config-agentl
+
+  此代理负责创建和更新 SmartDataCenter 服务的配置文件。通常在每个 SDC 服务器的全局区域（GZ）中运行“配置代理”服务，并且在每个核心 SDC 区域中有一个。 
+
+  config-agent 在定期轮询间隔更新。它轮询服务 API（SAPI）以获取其管理的 SDC 实例的配置信息，将模板（配置为“sapi_manifests”目录下的模板）渲染为文件内容，并更新配置文件（如果更改）。
+* node-sdc-clients 此存储库保存许多核心 Triton REST API 的 Node.js 客户端库
+* metadata
+  元数据是驻留在承载实例的计算节点上的 JSON 格式的键/值数据。每个容器和硬件 VM 都有自己的元数据存储。 您可以通过操作门户或通过 CloudAPI 设置元数据。
+  您可以在配置计算机之前设置元数据，也可以在设置后更改元数据。Metadata API 不依赖于网络。在基础架构容器上，Metadata API 通过 zsocket 与计算节点通信。
+  对于硬件虚拟化容器（KVM），Metadata API 使用机器上可用的第二个串行端口。对于 Linux 机器，这通常是/ dev / ttys1。对于 Windows 机器，这是 COM2。
+* /boot 
+  /boot/configure.sh
+  1. updataing SMF manifest
+  2. Importing xxapi.xml
+   
+  /boot/setup.sh
+  

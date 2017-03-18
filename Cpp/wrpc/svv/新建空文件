@@ -1,0 +1,25 @@
+#include "rabbitmq_sender.h"
+
+Rabbitmq_sender::Rabbitmq_sender(const std::string & target_addr, int port)
+	:Sender(target_addr, port)
+{
+}
+
+Rabbitmq_sender::~Rabbitmq_sender()
+{
+}
+
+int Rabbitmq_sender::send_msg_no_reply(int targe_mod, char * msg, int len)
+{
+	return 0;
+}
+
+int Rabbitmq_sender::send_msg_sync(int target_mod, char * msg_s, int len_s, char * msg_replay, int & len_r)
+{
+	return 0;
+}
+
+int Rabbitmq_sender::send_msg_async(int target_mod, char * msg_s, int len_s, msg_callback_fun cb, void * arg)
+{
+	return 0;
+}

@@ -1,0 +1,12 @@
+function Bomb() {
+    this.message = 'Boom';
+}
+Bomb.prototype.explode = function(){
+    console.log(this.message);
+};
+Bomb.prototype.delay_explode = function(){
+    setTimeout(this.explode.bind(this),100);
+};
+var bomb = new Bomb();
+Bomb.delay_explode();
+

@@ -1,0 +1,58 @@
+* Tasks
+** TODO 
+   [2016-11-25 五]
+   [[file:~/CODE/org/spacemacs.org::*customize][customize]]
+** DONE 
+   CLOSED: [2016-11-30 三 09:27]
+   [2016-11-29 二]
+   [[file:~/CODE/org/svn.org][file:~/CODE/org/svn.org]]
+** TODO 
+    SFML Game Development
+    [[https://book.douban.com/subject/26316124/]]
+** TODO 
+   [2016-11-30 三]
+   [[file:~/CODE/Fortron/tutorial/fileIO.f::if(%20n%20.GT.%20nmax)%20then]]
+   asterisks 
+** TODO 
+   [2016-12-08 四]
+   [[file:~/CODE/Python/pj/python_captcha/crack.py::def%20magnitude(self,%20concordance):]]
+** TODO 
+   SCHEDULED: <2016-12-10 六>
+   https://github.com/trending/python
+** TODO 
+   [2016-12-20 二]
+   [[file:~/CODE/C/rabbitmqc/client1.c][file:~/CODE/C/rabbitmqc/client1.c]]
+** TODO  
+   SCHEDULED: <2016-12-20 二>
+    [[http://www.cnblogs.com/lienhua34/]]
+** TODO 
+   [2016-12-10 Sat]
+   [[file:~/todo.org::*Tasks][Tasks]]
+** 站立办公
+   1. 把站立的重心移到脚掌内侧
+** TODO 
+   [2016-12-22 四]
+   [[file:~/CODE/latex/hello.tex::Hello,%20world!]]
+** linux latex 资源
+   [[http://cs2.swfc.edu.cn/~wx672/lecture_notes/linux/]]
+** cpp 
+   [[http://blog.csdn.net/liuxuejiang158blog]]
+   [[http://blog.csdn.net/xiaoxiaoyeyaya/article/details/42541419]]
+** TODO 
+   [2017-01-05 四]
+   [[file:~/Project/hunghucloud/codes/backend/wrpc/modeA.cpp::address_book.Serialize]]
+   hprose
+** TODO 
+   [2017-01-10 二]
+   [[file:~/Project/hunghucloud/codes/backend/wrpc/vm_cn_interface.pb.cc::#include%20<google/protobuf/stubs/common.h>]]
+   [[http://es6.ruanyifeng.com/#docs/generator]]
+** TODO 
+   termite
+** blog
+  [[http://www.hahack.com/]]
+  [[http://tech.acgtyrant.com/]]
+  [[http://felixc.at/]]
+  [[http://lifegoo.pluskid.org/wiki/Linux.html]]
+  [[http://geekplux.com/wiki/]]
+** cpp thread
+   [[http://blog.csdn.net/shreck66/article/details/50409874]]

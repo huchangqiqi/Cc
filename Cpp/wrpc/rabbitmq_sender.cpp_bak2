@@ -1,0 +1,148 @@
+#include "rabbitmq_sender.h"
+#include <iostream>
+#include <thread>
+#include <functional>
+#include <uuid/uuid.h>
+
+void consume(AmqpClient::Channel::ptr_t& channel,
+             AmqpClient::BasicMessage::ptr_t& message,
+             std::string & consumer,
+             msg_callback_fun& cb,
+             void* arg)
+{
+  std::cout << "start consuming in thread ..." << std::endl;
+  for(;;){
+    std::cout << "before envelope" << std::endl;
+    AmqpClient::Envelope::ptr_t envelope = channel->BasicConsumeMessage(consumer);
+    if(envelope->Message()->CorrelationId() == message->CorrelationId()){
+      //std::cout << envelope->Message()->Body() << std::endl;
+      cb(envelope->Message()->Body(),100,arg);
+      break;
+    }
+  }
+}
+
+Rabbitmq_sender::Rabbitmq_sender(const std::string& target_addr, int port)
+  :sender(target_addr,port)
+{
+	m_channel = AmqpClient::Channel::Create("localhost");
+  m_exchange = target_addr;
+  m_channel->DeclareExchange(m_exchange,AmqpClient::Channel::EXCHANGE_TYPE_DIRECT);
+}
+
+
+Rabbitmq_sender::~Rabbitmq_sender()
+{
+
+}
+
+int Rabbitmq_sender::send_msg_no_reply( int target_mod, std::string& msg, int len )
+{
+  m_routing_key = std::to_string(target_mod);
+  AmqpClient::BasicMessage::ptr_t message = AmqpClient::BasicMessage::Create(msg);
+  m_channel->BasicPublish(m_exchange,
+                          m_routing_key,
+                          message);
+  return 0;
+}
+
+int Rabbitmq_sender::send_msg_sync( int target_mod,
+                                    std::string& msg_s,int len_s,
+                                    std::string& msg_replay, int len_r )
+{
+  m_routing_key = std::to_string(target_mod);
+  AmqpClient::BasicMessage::ptr_t message = AmqpClient::BasicMessage::Create(msg_s);
+
+  const std::string cid = "123";
+  const std::string reply_queue_name = m_channel->DeclareQueue("");
+  message->CorrelationId(cid);
+  message->ReplyTo(reply_queue_name);
+
+  m_channel->BasicPublish(m_exchange,
+                          m_routing_key,
+                          message);
+
+
+  std::string consumer = m_channel->BasicConsume(reply_queue_name);
+
+  std::cout << "consuming" << std::endl;
+  for(;;){
+    AmqpClient::Envelope::ptr_t envelope = m_channel->BasicConsumeMessage(consumer);
+
+    if(envelope->Message()->CorrelationId() == message->CorrelationId()){
+      //msg_replay = (char *)envelope->Message()->Body().data();
+      std::cout<< envelope->Message()->Body()<<std::endl;
+      break;
+    }
+  }
+  return 0;
+}
+
+int Rabbitmq_sender::send_msg_async( int target_mod, std::string& msg_s, int len_s, msg_callback_fun cb, void *arg )
+{
+
+  m_routing_key = std::to_string(target_mod);
+  AmqpClient::BasicMessage::ptr_t message = AmqpClient::BasicMessage::Create(msg_s);
+
+  const std::string cid = "123";
+  const std::string reply_queue_name = m_channel->DeclareQueue("");
+  message->CorrelationId(cid);
+  message->ReplyTo(reply_queue_name);
+
+  m_channel->BasicPublish(m_exchange,
+                          m_routing_key,
+                          message);
+
+  std::string consumer = m_channel->BasicConsume(reply_queue_name);
+  std::thread thrd(consume,std::ref(m_channel),std::ref(message),std::ref(consumer),
+                   std::ref(cb),std::ref(arg));
+  thrd.join();
+
+  return 0;
+}
+
+/*
+int Rabbitmq_sender::send_msg_async(int target_mod, char* msg_s, int len_s,
+                                    msg_callback_fun cb, void* arg) {
+    m_routing_key = std::to_string(target_mod);
+    AmqpClient::BasicMessage::ptr_t message =
+        AmqpClient::BasicMessage::Create(msg_s);
+
+    const std::string cid = "123";
+    const std::string reply_queue_name = m_channel->DeclareQueue("");
+    message->CorrelationId(cid);
+    message->ReplyTo(reply_queue_name);
+
+    m_channel->BasicPublish(m_exchange, m_routing_key, message);
+
+    std::string consumer = m_channel->BasicConsume(reply_queue_name);
+    std::thread thrd(consume, std::ref(m_channel), std::ref(message),
+                     std::ref(consumer), std::ref(cb), std::ref(arg));
+    thrd.join();
+
+    return 0;
+}
+
+void consume(AmqpClient::Channel::ptr_t& channel,
+             AmqpClient::BasicMessage::ptr_t& message, std::string& consumer) {
+    std::cout << "start consuming in thread ..." << std::endl;
+    for (;;) {
+        std::cout << "before envelope" << std::endl;
+        AmqpClient::Envelope::ptr_t envelope =
+            channel->BasicConsumeMessage(consumer);
+        if (envelope->Message()->CorrelationId() == message->CorrelationId()) {
+            std::cout << envelope->Message()->Body() << std::endl;
+            int msg_id = 0;
+            const char* msg = envelope->Message()->Body().c_str();
+            int len = envelope->Message()->Body().length();
+            std::shared_ptr<Message_completion> pc =
+                Sender::find_and_remove_completion(msg_id);
+            pc->pfunc(msg, len, pc->arg);
+            // cb(envelope->Message()->Body(),100,arg);
+            break;
+        }
+    }
+}
+*/
+
+

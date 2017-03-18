@@ -1,0 +1,213 @@
+syntax = "proto3";
+option cc_enable_arenas = true;
+
+package wwit.protobuf;
+
+enum OPCode {
+	DETAIL_NOT_SET = 0;
+	VM_ADD_NICS = 1;
+	VM_CREATE = 2;
+	VM_CREATE_SNAPSHOT = 3;
+	VM_REBOOT = 4;
+	VM_REMOVE_DISKS = 5;
+	VM_REMOVE_NICS = 6;
+	VM_ROLLBACK_SNAPSHOT = 7;
+	VM_SET_AUTOBOOT = 8;
+	VM_SET_DISK_COMPRESSION = 9;
+	VM_SET_DISK_IMAGE_NAME = 10;
+	VM_SET_DISK_IMAGE_SIZE = 11;
+	VM_SET_DISK_IMAGE_UUID = 12;
+	VM_SET_DISK_ISBOOT = 13;
+	VM_SET_DISK_MEDIA = 14;
+	VM_SET_DISK_MODEL = 15;
+	VM_SET_DISK_SIZE = 16;
+	VM_SET_DISK_ZPOOL = 17;
+	VM_SET_FIREWALL_ENABLE = 18;
+	VM_SET_HOSTNAME = 19;
+	VM_SET_MAX_LOCKED_MEMORY = 20;
+	VM_SET_MAX_LWPS = 21;
+	VM_SET_MAX_PHYSICAL_MEMORY = 22;
+	VM_SET_MAX_SWAP = 23;
+	VM_SET_NICS_ALLOW_DHCP_SPOOFING = 24;
+	VM_SET_NICS_ALLOW_IP_SPOOFING = 25;
+	VM_SET_NICS_ALLOW_MAC_SPOOFING = 26;
+	VM_SET_NICS_ALLOW_RESTRICTED_TRAFFIC = 27;
+	VM_SET_NICS_ALLOW_UNFILTERED_PROMISC = 28;
+	VM_SET_NICS_ALLOWED_IPS = 29;
+	VM_SET_NICS_BLOCKED_OUTGOING_PORTS = 30;
+	VM_SET_NICS_DHCP_SERVER = 31;
+	VM_SET_NICS_GATEWAY = 32;
+	VM_SET_NICS_GATEWAYS = 33;
+	VM_SET_NICS_IP = 34;
+	VM_SET_NICS_IPS = 35;
+	VM_SET_NICS_MODEL = 36;
+	VM_SET_NICS_MTU = 37;
+	VM_SET_NICS_NETMASK = 38;
+	VM_SET_NICS_NETWORK_UUID = 39;
+	VM_SET_NICS_PRIMARY = 40;
+	VM_SET_NICS_TAG = 41;
+	VM_SET_NICS_VLAN_ID = 42;
+	VM_SET_NICS_VRRP_PRIMATY_IP = 43;
+	VM_SET_NICS_VRRP_VRID = 44;
+	VM_START = 45;
+	VM_STOP = 46;
+	VM_UPDATE_ALIAS = 47;
+	VM_UPDATE_CPU_CAP = 48;
+	VM_UPDATE_CPU_SHARES = 49;
+	VM_UPDATE_CPU_TYPE = 50;
+	VM_UPDATE_DISK_DRIVER = 51;
+	VM_UPDATE_DISKS = 52;
+	VM_UPDATE_DNS_DOMAIN = 53;
+	VM_UPDATE_NIC_DRIVER = 54;
+	VM_UPDATE_NICS = 55;
+	VM_UPDATE_OWNER_UUID = 56;
+	VM_UPDATE_PACKAGE_NAME = 57;
+	VM_UPDATE_PAKAGE_VERSION = 58;
+	VM_UPDATE_QEMU_EXTRA_OPTS = 59;
+	VM_UPDATE_QEMU_OPTS = 60;
+	VM_UPDATE_QUOTA = 61;
+	VM_UPDATE_RAM = 62;
+	VM_UPDATE_RESOLVERS = 63;
+	VM_UPDATE_ROUTS = 64;
+	VM_UPDATE_VCPUS = 65;
+	VM_UPDATE_VGA = 66;
+	VM_UPDATE_VNC_PASSWORD = 67;
+	VM_UPDATE_VNC_PORT = 68;
+	VM_UPDATE_ZFS_DATA_COMPRESSION = 69;
+	VM_UPDATE_ZFS_DATA_RECSIZE = 70;
+	VM_UPDATE_ZFS_FILESYSTEM_LIMIT = 71;
+	VM_UPDATE_ZFS_IO_PRIORITY = 72;
+	VM_UPDATE_ZFS_ROOT_COMPRESSION = 73;
+	VM_UPDATE_ZFS_ROOT_RECSIZE = 74;
+	VM_UPDATE_ZFS_SNAPSHOT_LIMIT = 75;
+	VM_UPDATE_ZLOG_MAX_SIZE = 76;
+	VM_UPDATE_ZLOG_MODE = 77;
+	VM_ADD_DISKS = 78;
+	VM_DELETE = 79;
+	VM_DELETE_SNAPSHOT = 80;
+}
+
+message Disk {
+	reserved 1, 3 to 6, 8, 12;
+	// sint32	block_size = 1;
+	bool		boot = 2;
+	// string	compression = 3;
+	// string	nocreate = 4;
+	// string	image_name = 5;
+	// sint32	image_size = 6;
+	string	image_uuid = 7;
+	// sint32	refreservation = 8;
+	sint32	size = 9;
+	string	media = 10;
+	string	model = 11; //allowed: virtio ide sici
+	// string	zpool = 12;
+}
+
+// message Filesystem {
+// 	string	type = 1;
+// 	string	source = 2;
+// 	string	target = 3;
+// 	string	raw = 4;
+// 	repeated string options = 5;
+// }
+
+message Nic {
+	reserved 1 to 5, 11, 14, 16, 18, 21 to 23;
+	// bool		allow_dhcp_spoofing = 1;
+	// bool		allow_ip_spoofing = 2;
+	// bool		allow_mac_spoofing = 3;
+	// bool		allow_restricted_traffic = 4;
+	// bool		allow_unfiltered_promisc = 5;
+	repeated	sint32 blocked_outgoing_ports = 6;
+	repeated	string	allowed_ips = 7;
+	bool		dhcp_server = 8;
+	string		gateway = 9;
+	repeated	string gateways = 10;
+	// string	interface = 11;
+	string		ip = 12;
+	repeated	string ips = 13;
+	// string	mac = 14;
+	string		model = 15;
+	// sint32	mtu = 16;
+	string		netmask = 17;
+	// string	network_uuid = 18;
+	string		nic_tag = 19;
+	bool		primary = 20;
+	// sint32	vlan_id = 21;
+	// string	vrrp_primary_ip = 22;
+	// sint32	vrrp_vrid = 23;
+}
+
+message VMMessage {
+	reserved 3, 4, 6 to 8, 10, 11, 13, 15, 17 to 26, 28 to 35, 39 to 42, 44 to 57;
+	string		alias = 1;
+	bool		archive_on_delete = 2;
+	// bool		autoboot = 3;
+	// string	billing_id = 4;
+	string		brand = 5; //allowed: joyent joyent-minimal kvm lx
+	// sint32	cpu_cap = 6;
+	// sint32	cpu_share = 7;
+	// string	cpu_type = 8;
+	repeated	wwit.protobuf.Disk disks = 9;
+	// string	disk_driver = 10;
+	// bool		do_not_inventory = 11;
+	string		domain = 12;
+	// repeated Filesystem filesystems = 13;
+	bool		firewall_enable = 14;
+	// string	fs_allowed = 15;
+	string		hostname = 16;
+	// string	image_uuid = 17;
+	// bool		indestructible_delegated = 18;
+	// bool		indestructible_zoneroot = 19;
+	// string	limit_priv = 20;
+	// bool		maintain_resolvers = 21;
+	// sint32	max_locked_memory = 22;
+	// sint32	max_lwps = 23;
+	// sint32	max_physical_memory = 24;
+	// sint32	max_swap = 25;
+	// sint32	mdata_exec_timeout = 26;
+	repeated	wwit.protobuf.Nic nics = 27;
+	// string	nic_driver = 28;
+	// bool		nowait = 29;
+	// string	owner_uuid = 30;
+	// string	package_name = 31;
+	// string	package_version = 32;
+	// string	qemu_opts = 33;
+	// string	qemu_extra_opts = 34;
+	// sint32	quota = 35;
+	sint32		ram = 36;
+	repeated	string resolvers = 37;
+	// map<string, string> routes = 38;
+	// string	spice_opts = 39;
+	// string	spice_password = 40;
+	// sint32	spice_port = 41;
+	// string	uuid = 42;
+	sint32		vcpus = 43;
+	// string	vga = 44;
+	// sint32	virtio_txburst = 45;
+	// sint32	virtio_txtimer = 46;
+	// string	vnc_password = 47;
+	// sint32	vnc_port = 48;
+	// string	zfs_data_compression = 49;
+	// sint32	zfs_data_recsize = 50;
+	// sint32	zfs_filesystem_limit = 51;
+	// sint32	zfs_io_priority = 52;
+	// string	zfs_root_compression = 53;
+	// sint32	zfs_root_recsize = 54;
+	// sint32	zfs_snapshot_limit = 55;
+	// string	zonename = 56;
+	// string	zpool = 57;
+}
+
+message Instruction {
+	OPCode	opcode = 1;
+	string	uuid = 2;
+	oneof	detail {
+		VMMessage	s_payload = 3;
+		Disk		disk = 4;
+		Nic			nic = 5;
+		bool		isEnable = 6;
+		string		str = 7;
+		sint32		val = 8;
+	}
+}

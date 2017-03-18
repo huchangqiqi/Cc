@@ -1,0 +1,10 @@
+* git log
+  git log 查看 commit_id(hash值)
+  回退到历史版本
+  git reset --hard commit_id(hash值) 会退到指定版本
+  重返未来
+  git reflog
+* git add
+  工作区 --> stage(暂存区)
+* git commit 
+  stage --> 分支

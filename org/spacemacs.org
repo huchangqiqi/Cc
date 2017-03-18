@@ -5,13 +5,17 @@
   #,gg
 * Magit   
  space g s
- s ## stage file 在unstage 的文件上按s 
- 在文件夹上按s 可以stage 整个文件夹
+ s ## stage file 在 unstage 的文件上按 s 
+ 在文件夹上按 s 可以 stage 整个文件夹
  c ## commit file
- 在git status界面按c 之后a 可以stage all file 然后再按c提交
+ 在 git status 界面按 c 之后 a 可以 stage all file 然后再按 c 提交
  C-c C-c ## 提交
- p ## push界面 再按p 直接push到远程
- 
+ p ## push 界面 再按 p 直接 push 到远程
+
+ git 合并代码过程
+ git fetch 
+ git merge origin/master 
+ 手动修改冲突代码
 * Org
 ** list
 ** footnotes
@@ -24,7 +28,7 @@
     DEADLINE: <2016-12-10 六> 
 *** DONE d2
     CLOSED: [2016-11-24 四 15:50]
-*** TODO   start latex ！！！
+*** TODO   start latex！！！
     SCHEDULED: <2016-11-24 四>
     
     | Input | 	Result    | 	Explanation |
@@ -54,15 +58,20 @@
 
    #+RESULTS: py
    : None
-
+   
 * agenda 
-** 
-     todo
-     space m I 
-     space m p
-     space m o
-     c-c c-t
-
+** agenda 快捷键 
+      shift+alt+enter #建立一个 todo
+      space m I  #clock in  开始计入时间
+      space m O  #clock out 结束计入时间 
+      space m P  #Pomodoro  番茄时间
+      c-c c-t
+** TODO 再次学习 org-agenda
+   SCHEDULED: <2017-02-25 六 15:30>
+   :LOGBOOK:
+   CLOCK: [2017-02-25 六 13:36]
+   CLOCK: [2017-02-25 六 13:35]--[2017-02-25 六 13:36] =>  0:01
+   :END:
 * layout
   l s #save the layout 
   l L #load the layout
@@ -79,3 +88,40 @@
 
 * customize-variables 
   customize-variables tex-view-program-list
+
+* 手动更新 spacemacs
+  1. 在.emacs.d 目录下 git fetch
+  2. git head reset 
+
+* 安装 latex
+  pacman -S texlive-{bin,core}
+
+* ld 把/usr/local/lib 加入默认库
+  su
+  echo "/usr/local/lib/" >> /etc/ld.so.conf
+  /sbin/ldconfig
+
+* 配置 l2tpVPN
+  yaourt -S networkmanager-l2tp
+  strongswan 下载源码 
+  ./configure --prefix=/usr --sysconfdir=/etc  --enable-openssl --enable-nat-transport
+  make 
+  sudo make install
+
+* dotfiles
+  cd dotfiles
+  git add . 
+  git remote add origin git@github.com:huchangqiqi/dotfiles.git
+  git push -u origin master
+
+  git clone git@github.com:huchangqiqi/dotfiles.git dotfiles
+  rm -rf .vimrc .zshrc
+  ln -s dotfiles/vimrc .vimrc
+  ln -s dotfiles/zshrc .zshrc
+
+* font 
+  chinese-layer
+  yaourt -s source han sans
+
+* tmux
+  shift + 鼠标中键复制

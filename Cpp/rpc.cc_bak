@@ -1,0 +1,146 @@
+#include "SimpleAmqpClient/SimpleAmqpClient.h"
+#include <iostream>
+#include <future>
+#include <thread>
+#include <chrono>
+#include <unordered_map>
+
+typedef void(*msg_callback_fun)(const std::shared_ptr<std::string> pMsg, void* arg);
+typedef struct Msg_completion_str
+{
+	msg_callback_fun pfunc;
+	void* arg;
+}Message_completion;
+
+int generate_msg_id()
+{
+    static std::atomic_uint_fast32_t id(0) ;
+    return id++;
+}
+
+
+class RPC
+{
+public:
+    RPC(const std::string& send_ip,const std::string& reply_ip,const std::string& rbserver_ip,const std::string& reply_routingkey)
+        :m_send_ip(send_ip),
+         m_reply_ip(reply_ip),
+         m_rbserver_ip(rbserver_ip),
+         m_pchannel(AmqpClient::Channel::Create(m_rbserver_ip)),
+         m_reply_routingkey(reply_routingkey)
+    {
+        m_reply_queue_name = m_pchannel->DeclareQueue("");
+        m_pchannel->BindQueue(m_reply_queue_name, m_reply_ip, m_reply_routingkey);
+        m_consumer_tag = m_pchannel->BasicConsume(m_reply_queue_name);
+        /*
+        std::thread t(std::mem_fn(&RPC::receive_msg),this);
+        t.detach();
+        */
+    }
+
+    void send_msg(const std::string& msg, const std::string& target_mod, msg_callback_fun cb, void *arg);
+    void receive_msg();
+    void receive_msg_async()
+    {
+        std::thread t(std::mem_fn(&RPC::receive_msg),this);
+        t.detach();
+    }
+private:
+    std::string m_send_ip;
+    std::string m_reply_ip;
+    std::string m_rbserver_ip;
+    AmqpClient::Channel::ptr_t m_pchannel;
+    std::string m_reply_routingkey;
+    std::string m_reply_queue_name;
+    std::string m_consumer_tag;
+  	std::unordered_map<int, std::shared_ptr<Message_completion>> m_completions_map;
+	std::mutex m_completions_map_lck;
+    std::condition_variable m_cond_var;
+    std::mutex lck;
+    bool done;
+
+	void new_and_add_completion(int msg_id, msg_callback_fun cb, void* arg);
+	std::shared_ptr<Message_completion> find_and_remove_completion(int msg_id);
+
+};
+void RPC::send_msg(const std::string& msg,
+              const std::string& target_mod,
+              msg_callback_fun cb,
+              void *arg)
+{
+    AmqpClient::BasicMessage::ptr_t message = AmqpClient::BasicMessage::Create(msg);
+    int msg_id = generate_msg_id();
+    const std::string message_id = std::to_string(msg_id);
+    message->MessageId(message_id);
+    new_and_add_completion(msg_id,cb,arg);
+    m_pchannel->BasicPublish(m_send_ip, target_mod, message);
+}
+
+void RPC::receive_msg()
+{
+    bool have_msg = true;
+    while(have_msg)
+    {
+        // BasicConsumeMessage 如果没有会阻塞在这里
+        AmqpClient::Envelope::ptr_t envelope = 	m_pchannel->BasicConsumeMessage(m_consumer_tag);
+        if(envelope.get() == nullptr){
+            have_msg = false;
+            std::cout << "false" << std::endl;
+            break;
+            //std::cout << envelope->Message()->Body() << std::endl;
+        }
+        std::string message_id = envelope->Message()->MessageId();
+        int msg_id = atoi(message_id.c_str());
+        std::shared_ptr<std::string> pMsg(new std::string(envelope->Message()->Body()));
+        std::shared_ptr<Message_completion> pCompletion = find_and_remove_completion(msg_id);
+        if(nullptr == pCompletion){
+            //
+        }
+        pCompletion->pfunc(pMsg, pCompletion->arg);
+    }
+}
+
+void RPC::new_and_add_completion(int msg_id, msg_callback_fun cb, void* arg)
+{
+	std::shared_ptr<Message_completion> pc(new Message_completion);
+	if ( nullptr == pc.get())
+    {
+            //throw error_exception("alloc Message_completion fail", ALLOCATE_FAIL);
+    }
+	pc->pfunc = cb;
+	pc->arg = arg;
+	std::lock_guard<std::mutex> __locker(m_completions_map_lck);
+	m_completions_map.insert({ msg_id, pc });
+	return;
+}
+
+
+std::shared_ptr<Message_completion> RPC::find_and_remove_completion(int msg_id)
+{
+	std::shared_ptr<Message_completion> pc(nullptr);
+	{
+		std::lock_guard<std::mutex> __locker(m_completions_map_lck);
+		auto it = m_completions_map.find(msg_id);
+		if (it != m_completions_map.end())
+            {
+                pc = it->second;
+                m_completions_map.erase(it);
+            }
+	}
+	return pc;
+}
+
+void mcf(const std::shared_ptr<std::string> pMsg, void* arg)
+{
+    std::cout << *pMsg.get() << std::endl;
+}
+
+int main()
+{
+    RPC* rpc = new RPC("10.0.0.1","10.0.0.2","10.9.5.31","reply");
+    for(int i = 0; i< 3; i++){
+        rpc->send_msg("hellllo","vm",mcf,nullptr);
+    }
+    rpc->receive_msg();
+    return 0;
+}

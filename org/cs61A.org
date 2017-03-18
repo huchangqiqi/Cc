@@ -1,0 +1,23 @@
+* L1
+  f = 2(x+3)
+  g = 2x + 6
+  计算机内部只有过程 procedure
+  function 是过程的抽象
+* L2
+** programing paradimgs
+   fp
+   oo
+   c/s
+   declaretive
+** abstract
+   high level language 
+   low
+   machine 
+   ee
+   transistor
+   ...
+** (fn arg arg ...)
+** define
+   define is special
+** applic order & normal order
+

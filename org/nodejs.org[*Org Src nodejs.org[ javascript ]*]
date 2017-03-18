@@ -1,0 +1,9 @@
+function Foo(a, cb) {
+    console.log(a);
+    //do something
+    cb(Math.random());
+}
+var callback = function(num){
+    console.log(num);
+}
+Foo(2, callback);

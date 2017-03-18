@@ -1,7 +1,4 @@
 * Tasks
-** TODO 
-   [2016-11-25 五]
-   [[file:~/CODE/org/spacemacs.org::*customize][customize]]
 ** DONE 
    CLOSED: [2016-11-30 三 09:27]
    [2016-11-29 二]
@@ -24,7 +21,7 @@
    [[file:~/CODE/C/rabbitmqc/client1.c][file:~/CODE/C/rabbitmqc/client1.c]]
 ** TODO  
    SCHEDULED: <2016-12-20 二>
-   [[http://www.cnblogs.com/lienhua34/]]
+    [[http://www.cnblogs.com/lienhua34/]]
 ** TODO 
    [2016-12-10 Sat]
    [[file:~/todo.org::*Tasks][Tasks]]
@@ -35,3 +32,32 @@
    [[file:~/CODE/latex/hello.tex::Hello,%20world!]]
 ** linux latex 资源
    [[http://cs2.swfc.edu.cn/~wx672/lecture_notes/linux/]]
+** cpp 
+   [[http://blog.csdn.net/liuxuejiang158blog]]
+   [[http://blog.csdn.net/xiaoxiaoyeyaya/article/details/42541419]]
+** TODO 
+   [2017-01-05 四]
+   [[file:~/Project/hunghucloud/codes/backend/wrpc/modeA.cpp::address_book.Serialize]]
+   hprose
+** TODO 
+   [2017-01-10 二]
+   [[file:~/Project/hunghucloud/codes/backend/wrpc/vm_cn_interface.pb.cc::#include%20<google/protobuf/stubs/common.h>]]
+   [[http://es6.ruanyifeng.com/#docs/generator]]
+** TODO 
+   termite
+** blog
+  [[http://www.hahack.com/]]
+  [[http://tech.acgtyrant.com/]]
+  [[http://felixc.at/]]
+  [[http://lifegoo.pluskid.org/wiki/Linux.html]]
+  [[https://www.douban.com/doulist/4041785/]]
+** cpp thread
+  [[http://blog.csdn.net/shreck66/article/details/50409874]]
+  http://blog.csdn.net/jonathan321/article/details/52679471
+** block 
+   “最重要的是，我希望我们不要变成传道士，不要认为你是兜售圣经的人，世界上这种人已经太多了。
+   你所知道的有关计算机的东西，其他人也都能学到。绝不要认为似乎成功计算的钥匙就掌握在你的手里。
+   你所掌握的，也是我认为并希望的，也就是智慧：那种看到这一机器比你第一次站在它面前时能做得更多的能力，
+   这样你才能将它向前推进。”
+** TODO Read /etc/NetworkManager/NetworkManager.conf
+** TODO Plan/Do/Check/Action

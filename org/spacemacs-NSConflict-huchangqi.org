@@ -1,0 +1,90 @@
+* gtags 
+  yaourt : global ctags python-pygments ycm-generator-git
+  .spacemacs gtags
+  #c-c++ mode
+  #,gg
+* Magit   
+ space g s
+ s ## stage file 在unstage 的文件上按s 
+ 在文件夹上按s 可以stage 整个文件夹
+ c ## commit file
+ 在git status界面按c 之后a 可以stage all file 然后再按c提交
+ C-c C-c ## 提交
+ p ## push界面 再按p 直接push到远程
+ 
+* Org
+** list
+** footnotes
+** tables
+** Hyperlink 
+   [[http://www.fuzihao.org/blog/2015/02/19/org-mode%E6%95%99%E7%A8%8B]]
+** TODO 总任务
+*** TODO d1
+    SCHEDULED: <2016-12-05 一>
+    DEADLINE: <2016-12-10 六> 
+*** DONE d2
+    CLOSED: [2016-11-24 四 15:50]
+*** TODO   start latex ！！！
+    SCHEDULED: <2016-11-24 四>
+    
+    | Input | 	Result    | 	Explanation |
+    (blank) 	2007-12-30 	Today
+    10:30 	  2007-12-30 10:30 	Time today
+    3:30pm 	  2007-12-30 15:30 	Time today
+    31 	      2007-12-31 	Day in the current month
+    12-31 	  2007-12-31 	Month and day in the current year
+    2008-01-01 	2008-01-01 	Date
+    2008-01-01 12:30am 	2008-01-01 00:30 	Date and time (also works with partial dates)
+    +2 	2008-12-31 	Two days from now
+    -3 	2007-12-26 	Three days ago
+    Fri 	2008-01-04 	The nearest Friday (on or after today)
+    +2w 	2008-01-12 	Two weeks from today
+** tags
+** properties
+** date and time
+** capture 
+** agenda view
+** rich export
+** exporting
+** source code
+   #+NAME: py
+   #+BEGIN_SRC python
+   print("hello,org")
+   #+END_SRC
+
+   #+RESULTS: py
+   : None
+
+* agenda 
+** 
+     todo
+     space m I 
+     space m p
+     space m o
+     c-c c-t
+
+* layout
+  l s #save the layout 
+  l L #load the layout
+  
+* python
+  yaourt -S python-pip
+  #python 无法补全
+  pip install --upgrade "jedi>=0.9.0" "json-rpc>=1.8.1" "service_factory>=0.1.5"
+
+* manjaro
+  vim /etc/pacman-mirrors.conf
+  onlyCountry=China
+  pacman-mirrors -g
+
+* customize-variables 
+  customize-variables tex-view-program-list
+
+* 手动更新spacemacs
+  1. 在.emacs.d目录下 git fetch
+  2. git head reset 
+
+* 安装latex
+  pacman -S texlive-{bin,core}
+
+* ycmd 

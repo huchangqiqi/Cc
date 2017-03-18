@@ -22,17 +22,6 @@
          print('Child process end.')
    #+END_SRC
 
-   #+RESULTS: mp
-   : Parent process 22424.
-   : Child process will start.
-   : run child process test(22426)
-   : Child process end.
-
-
-
-
-
-
 
    multiprocessing 模块提供一个Process类代表一个进程对象
    创建一个Process实例，用start()方法启动，
@@ -88,4 +77,5 @@
       [[https://mcfloundinho.github.io/python-mutable.html]]
    3. function
       [[https://mcfloundinho.github.io/python-function.html]]
-   
+* web 
+  [[http://python.jobbole.com/86950/?utm_source=hao.jobbole.com&utm_medium=relatedArticle]]

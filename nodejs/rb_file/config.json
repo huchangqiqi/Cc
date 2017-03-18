@@ -1,0 +1,11 @@
+{
+    "localhost" : "10.0.0.2",
+    "vm":{
+        "port":"1002"
+    },
+    "rabbitmq":{
+        "rabbitmq_server_addr": "10.9.5.31",
+        "exchange_for_sender": "exchange_for_sender",
+        "exchange_for_receiver":"exchange_for_receiver"
+  }
+}
