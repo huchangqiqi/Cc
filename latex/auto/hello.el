@@ -3,8 +3,8 @@
  (lambda ()
    (TeX-run-style-hooks
     "latex2e"
-    "article"
-    "art10")
+    "ctexart"
+    "ctexart10")
    (LaTeX-add-labels
     "sec:introduction"
     "sec:top-matter"

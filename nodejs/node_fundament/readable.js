@@ -42,5 +42,4 @@ Mystream.prototype = object.create(Readable.prototype, {
 	constructor: {value: Mystream}
 });
 Mystream.prototype._read = function(size){
-
 };

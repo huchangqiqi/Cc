@@ -26,6 +26,7 @@ function start(response)
     response.write(body);
     response.end();
 }
+
 function upload(response, request)
 {
     console.log("Request handler 'upload' was called.");
@@ -37,7 +38,7 @@ function upload(response, request)
         fs.renameSync(files.upload.path, "/tmp/test.png");
         response.writeHead(200,{"Content-Type":"text/html"});
         response.write("received image: <br />");
-        response.write("<img src='/show />");
+        response.write("<img src='/show' />");
         response.end();
     });
 }
@@ -52,6 +53,7 @@ function upload(response, postData)
     response.end();
 }
 */
+
 function show(response) {
     console.log("Request handler 'show' was called ");
     fs.readFile("/tmp/test.png","binary", function(error, file){

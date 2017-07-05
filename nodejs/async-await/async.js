@@ -27,4 +27,6 @@ async function asyncFunc() {
 		console.log(err);
 	}
 }
-asyncFunc().then( x => console.log(`x: ${x}`)).catch(err => console.error(err));
+asyncFunc()
+	.then( x => console.log(`x: ${x}`))
+	.catch(err => console.error(err));

@@ -1,0 +1,16 @@
+\documentclass[a4paper]{ctexart}
+\usepackage{xeCJK}
+\usepackage{fontspec,xunicode,xltxtra}
+\usepackage{titlesec}
+
+\setCJKmainfont[ItalicFont={楷体}, BoldFont={黑体}]{宋体}
+%-----------------------------------------中文字体
+\setCJKfamilyfont{yh}{Microsoft YaHei}        % 1.微软雅黑 yh  
+\newcommand{\yh}{\CJKfamily{yh}}
+\newfontfamily\ls{LiSu}    % 2.隶书 ls
+%-----------------------------------------英文字体
+\newfontfamily\cl{Consolas}
+
+\begin{document}
+I just 随便 \yh{打} \ls{几个} \cl{word}
+\end{document}

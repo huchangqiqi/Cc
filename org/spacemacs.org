@@ -94,7 +94,8 @@
   2. git head reset 
 
 * 安装 latex
-  pacman -S texlive-{bin,core}
+  pacman -S texlive-{bin,core,latexextra}
+  texlive-langchinese
 
 * ld 把/usr/local/lib 加入默认库
   su
@@ -119,7 +120,7 @@
   ln -s dotfiles/vimrc .vimrc
   ln -s dotfiles/zshrc .zshrc
 
-* font 
+* 中文 font 
   chinese-layer
   yaourt -s source han sans
 
