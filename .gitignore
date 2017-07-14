@@ -272,3 +272,7 @@ TSWLatexianTemp*
 
 # expex forward references with \gathertags
 *-tags.tex
+
+# node_modules
+/nodejs/node_modules/*
+*node_modules/*

@@ -1,12 +1,12 @@
-function Bomb() {
-    this.message = 'Boom';
-}
-Bomb.prototype.explode = function(){
-    console.log(this.message);
-};
-Bomb.prototype.delay_explode = function(){
-    setTimeout(this.explode.bind(this),100);
-};
-var bomb = new Bomb();
-Bomb.delay_explode();
+Object.create(superCtor.prototype, {
+    constructor: {
+        value: ctor
+    }
+})
 
+// 本质上
+
+var TempCtor = function (){}
+TempCtor.prototype = superCtor.prototype
+cotr.prototype = new TempCtor()
+ctor.prototype.constructor = ctor

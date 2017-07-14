@@ -51,14 +51,27 @@
 ** rich export
 ** exporting
 ** source code
+
+   输入 <s then TAB 输入语言 :results output
+   然后 space m ' 进入 special code 模式
+   最后 , ' 返回 org
+   执行代码 ，，
+   （目前版本的 spacemacs org-mode 无法执行代码块)
+
    #+NAME: py
-   #+BEGIN_SRC python
+   #+BEGIN_SRC python :results output
    print("hello,org")
    #+END_SRC
 
    #+RESULTS: py
-   : None
-   
+
+  #+BEGIN_SRC js :results output
+    var f = function(){
+        console.log('hi')
+    }
+    f()
+  #+END_SRC 
+
 * agenda 
 ** agenda 快捷键 
       shift+alt+enter #建立一个 todo

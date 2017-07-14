@@ -12,7 +12,8 @@
 
   1. 使用构造函数模拟"类”， 在内部使用 this 指代实例对象
   2. Object.create()
-  3. createNew
+  3. 对象建用一个函数， 函数里面产出一个空对象 ，往空对象上加属性，返回该对象
+  createNew
      #+BEGIN_SRC js
        var Cat = {
            createNew: function(){
@@ -109,7 +110,8 @@
    一个闭包就是一个函数和被创建的函数中的作用域对象的组合。
 
 闭包允许你保存状态——所以它们通常可以代替对象来使用。
-* 原型
+* 原型链
+  [[https://developer.mozilla.org/en-US/docs/Web/JavaScript/Inheritance_and_the_prototype_chain]]
   Prototypes are the mechanism by which JavaScript objects inherit features from one another, 
   通过原型这种机制，js 中的对象从其他对象继承功能
 ** 继承
@@ -141,14 +143,22 @@
          }
      }
    #+END_SRC
+
+   #+BEGIN_SRC js
+   
+   #+END_SRC
+   
 ** __proto__ 和 prototype
- JS 当然没有“类”，只有 constructor。
- constructor 就是当你 new fn()时的那个“fn”。
- 当你 new fn 的时候，产生的实例的__proto__指向 fn.prototype，两者是同一个东西。
+   JS 当然没有“类”，只有 constructor。
+   constructor 就是当你 new fn()时的那个“fn”。
+   当你 new fn 的时候，产生的实例的__proto__指向 fn.prototype，两者是同一个东西。
 
   function Foo() {}
   var myfoo = new Foo();
   myfoo.__proto__ === Foo.prototype
+
+  prototype 是“类”的原型，__proto__是对象的原型。
+
 * exports 和 module.exports 区别
   1. module.exports 初始化一个空对象{}
   2. exports 是指向 module.exports 的引用
@@ -217,7 +227,7 @@
      #+END_SRC
      // 带有状态的才叫回调函数，own state，这里通过闭包保存的 a 就是状态
 * c++ 
-  [[https://nodejs.org/dist/latest-v6.x/docs/api/addons.html]]prototype 是“类”的原型，__proto__是对象的原型。
+  [[https://nodejs.org/dist/latest-v6.x/docs/api/addons.html]]prototype 
 
 * extends 关键字被用在类声明或者类表达式上
   class ChildClass extends ParentClass{ ... }
@@ -239,6 +249,8 @@
 
 
 
+* 重新认识 js
+ [[https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/A_re-introduction_to_JavaScript]]
 * 前端
 知识
 - HTML 
@@ -351,9 +363,3 @@
   octopus 章鱼 1. 给 view 提供接口 2. 调用 model 的函数修改 model
   不要怕显得不专业 能用别人实现的就用
   库，框架 相当于 octopus 帮我们分离 model view
-* 
-  # nictag 
-  Backbone.Marionette.Layout.extend
-     attributes: {
-        'id': 'page-nictag'
-      },
